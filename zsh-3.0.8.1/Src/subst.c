@@ -720,7 +720,9 @@ paramsubst(LinkList l, LinkNode n, char **str, int qt, int ssub)
     int whichlen = 0;
     int chkset = 0;
     int vunset = 0;
-    int spbreak = isset(SHWORDSPLIT) && !ssub && !qt;
+    static int mult_spbreak, mult_shwsplit;
+    int spbreak = (!ssub && !qt &&
+                  (mult_spbreak? mult_shwsplit : isset(SHWORDSPLIT)));
     char *val = NULL, **aval = NULL;
     unsigned int fwidth = 0;
     Value v;
@@ -1177,8 +1179,14 @@ paramsubst(LinkList l, LinkNode n, char **str, int qt, int ssub)
 	/* Fall Through! */
 	case '-':
 	    if (vunset) {
+		int shws = mult_shwsplit, spbr = mult_spbreak;
+		mult_shwsplit = spbreak;
+		mult_spbreak = 1;
 		val = dupstring(s);
 		multsub(&val, &aval, &isarr, NULL);
+		mult_shwsplit = shws;
+		mult_spbreak = spbr;
+		spbreak = 0;
 		copied = 1;
 	    }
 	    break;

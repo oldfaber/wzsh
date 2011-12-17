@@ -595,8 +595,15 @@ preprompt(void)
 
     /* If a shell function named "precmd" exists, *
      * then execute it.                           */
-    if ((list = getshfunc("precmd")))
+    if ((list = getshfunc("precmd"))) {
+	/*
+	 * Save stopmsg since the user should type `jobs' themself
+	 * to turn off the exit check.
+	 */
+	int osm = stopmsg;
 	doshfunc(list, NULL, 0, 1);
+	stopmsg = osm;
+    }
     if (errflag)
 	return;
 

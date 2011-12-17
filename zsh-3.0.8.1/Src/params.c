@@ -468,12 +468,14 @@ getarg(char **str, int *inv, Value v, int a2, zlong *w)
 		    }
 		return a2 ? -1 : 0;
 	    } else {
+	    	char *de;
 		d = getstrvalue(v);
 		if (!d || !*d)
 		    return 0;
+		de = d + strlen(d);
 		if (a2) {
 		    if (down)
-			for (r = -2, t = d + strlen(d) - 1; t >= d; r--, t--) {
+			for (r = -2, t = de; t >= d; r--, t--) {
 			    sav = *t;
 			    *t = '\0';
 			    if (domatch(d, c, 0) && !--num) {
@@ -482,7 +484,7 @@ getarg(char **str, int *inv, Value v, int a2, zlong *w)
 			    }
 			    *t = sav;
 		    } else
-			for (r = 0, t = d; *t; r++, t++) {
+			for (r = 0, t = d; t <= de; r++, t++) {
 			    sav = *t;
 			    *t = '\0';
 			    if (domatch(d, c, 0) && !--num) {
@@ -493,11 +495,11 @@ getarg(char **str, int *inv, Value v, int a2, zlong *w)
 			}
 		} else {
 		    if (down)
-			for (r = -1, t = d + strlen(d) - 1; t >= d; r--, t--) {
+			for (r = -1, t = de - 1; t >= d; r--, t--) {
 			    if (domatch(t, c, 0) && !--num)
 				return r;
 		    } else
-			for (r = 1, t = d; *t; r++, t++)
+			for (r = 1, t = d; t < de; r++, t++)
 			    if (domatch(t, c, 0) && !--num)
 				return r;
 		}
@@ -1053,7 +1055,7 @@ Param
 setiparam(char *s, zlong val)
 {
     Value v;
-    char *t = s;
+    char *t = s, *ss = NULL;
     Param pm;
 
     if (!isident(s)) {
@@ -1062,10 +1064,18 @@ setiparam(char *s, zlong val)
 	return NULL;
     }
     if (!(v = getvalue(&s, 1))) {
-	pm = createparam(t, PM_INTEGER);
+	if ((ss = strchr(s, '[')))
+	    *ss = '\0';
+	pm = createparam(t, ss ? PM_ARRAY : PM_INTEGER);
 	DPUTS(!pm, "BUG: parameter not created");
-	pm->u.val = val;
-	return pm;
+	if (ss) {
+	    *ss = '[';
+	    v = getvalue(&t, 1);
+	    DPUTS(!v, "BUG: value not found for new parameter");
+	} else {
+	    pm->u.val = val;
+	    return pm;
+	}
     }
     setintvalue(v, val);
     return v->pm;
