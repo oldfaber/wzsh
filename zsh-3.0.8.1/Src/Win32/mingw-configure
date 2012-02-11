@@ -1,0 +1,32 @@
+# mingw-configure
+#       setup some variables
+#       build the firk library
+#       call configure
+
+IPATH="$PWD/Src/Win32/include"
+export CFLAGS="-I$IPATH -Wall"
+export CPPFLAGS="-I$IPATH -Wall"
+# export LDFLAGS=  # LDFLAGS are inserted BEFORE other args
+# add the dummy fork lib, for configure tests
+export LIBS="-L$PWD/Src/Win32/lib -ldummyfork"
+export MAKE=mingw32-make
+# Add "ac_executable_extensions=.exe"
+# configure as shipped resets ac_exeext after reading config.site !
+export CONFIG_SITE=Src/Win32/config.site
+
+# dont' know why this is not found in ../../configure
+export AWK=gawk
+
+# where to log the ./configure output
+cfgout=mingw-conf.log
+
+if [ ! -f $IPATH/unistd.h ]; then
+	echo "cannot find $IPATH/unistd.h"
+	exit 1
+fi
+
+# use this script as Src/Win32/mingw-configure !
+# 1 - create the dummy fork library
+( cd Src/Win32/lib ; $MAKE dummyfork)
+# 2 - generate zsh.exe
+./configure --prefix=/bin --enable-zsh-debug > "$cfgout" 2>&1
