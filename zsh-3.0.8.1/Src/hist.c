@@ -669,7 +669,8 @@ hend(void)
     if (histactive & (HA_NOSTORE|HA_NOINC)) {
 	zfree(chline, hlinesz);
 	zfree(chwords, chwordlen*sizeof(short));
-	chline = NULL;
+	/* @@@@ oldfaber: added hptr, needed ? */
+	chline = hptr = NULL;
 	if (!(histactive & HA_NOINC))
 	    curhist--;
 	histactive = 0;
@@ -821,6 +822,14 @@ hwend(void)
 	    if (hwgetword > -1) {
 		/* We want to reuse the current word position */
 		chwordpos = hwgetword;
+		/* @@@@ oldfaber: chwords[chwordpos] may be < 0, and hptr goes backward,
+		   corrupting the heap. Tested assigning a string longer than 32k to
+		   a variable */
+		if (chwords[chwordpos - 1] < 0) {
+		    /* this is not a real fix, but avoids the corruption */
+		    chwordpos--;
+		    return;
+		}
 		/* Start from where previous word ended, if possible */
 		hptr = chline + chwords[chwordpos ? chwordpos - 1 : 0];
 	    }
