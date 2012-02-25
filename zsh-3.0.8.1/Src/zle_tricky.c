@@ -2087,7 +2087,7 @@ gen_matches_files(int dirs, int execs, int all)
 
 /* This holds the explanation string we have to print. */
 
-char *expl;
+static char *expl;
 
 /* This holds the suffix to add (given with compctl -S). */
 
@@ -3536,7 +3536,7 @@ listmatches(void)
 	!(haswhat & (HAS_MISC | HAS_PATHPAT)) ? niceztrlen(psuf) : 0;
 
     /* Set the cursor below the prompt. */
-    ll = strlen(line);
+    ll = strlen((char *)line);
     trashzle();
     ct = nmatches;
     showinglist = listshown = 0;
