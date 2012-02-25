@@ -82,15 +82,28 @@ findproc(pid_t pid, Job *jptr, Process *pptr)
     Process pn;
     int i;
 
-    for (i = 1; i < MAXJOB; i++)
+    /* initialize returned pointers to NULL */
+    *jptr = NULL;
+    *pptr = NULL;
+    for (i = 1; i < MAXJOB; i++) {
+	/* oldfaber: fix from Zsh 4.3.15 needed for Windows
+	 *           that recycles the pid very fast.
+	 * We are only interested in jobs with processes still
+	 * marked as live.  Careful in case there's an identical
+	 * process number in a job we haven't quite got around
+	 * to deleting.
+	 */
+	if (jobtab[i].stat & STAT_DONE)
+	    continue;
 	for (pn = jobtab[i].procs; pn; pn = pn->next)
 	    if (pn->pid == pid) {
 		*pptr = pn;
 		*jptr = jobtab + i;
-		return 1;
+		if (pn->status == SP_RUNNING) 
+		    return 1;
 	    }
-
-    return 0;
+    }
+    return (*pptr && *jptr);
 }
 
 /* Find the super-job of a sub-job. */
@@ -670,6 +683,10 @@ waitforpid(pid_t pid)
 
 	child_suspend(SIGINT);
 	child_block();
+#if defined(_WIN32)
+	/* only a single child_suspend() call */
+	break;
+#endif
     }
     child_unblock();
 }
