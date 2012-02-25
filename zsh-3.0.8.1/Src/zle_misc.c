@@ -382,12 +382,14 @@ undefinedkey(void)
 void
 quotedinsert(void)
 {
+#if !defined(_WIN32)
 #ifndef HAS_TIO
     struct sgttyb sob;
 
     sob = shttyinfo.sgttyb;
     sob.sg_flags = (sob.sg_flags | RAW) & ~ECHO;
     ioctl(SHTTY, TIOCSETN, &sob);
+#endif
 #endif
     c = getkey(0);
 #ifndef HAS_TIO

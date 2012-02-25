@@ -816,10 +816,14 @@ gettyinfo(struct ttyinfo *ti)
 # ifdef HAVE_TERMIO_H
 	ioctl(SHTTY, TCGETA, &ti->tio);
 # else
+#  if defined(_WIN32)
+	/* UNREFERENCED_PARAMETER(ti); */
+#  else
 	ioctl(SHTTY, TIOCGETP, &ti->sgttyb);
 	ioctl(SHTTY, TIOCLGET, &ti->lmodes);
 	ioctl(SHTTY, TIOCGETC, &ti->tchars);
 	ioctl(SHTTY, TIOCGLTC, &ti->ltchars);
+#  endif
 # endif
 #endif
     }
@@ -846,10 +850,14 @@ settyinfo(struct ttyinfo *ti)
 # ifdef HAVE_TERMIO_H
 	ioctl(SHTTY, TCSETA, &ti->tio);
 # else
+#  if defined(_WIN32)
+	/* UNREFERENCED_PARAMETER(ti); */
+#  else
 	ioctl(SHTTY, TIOCSETN, &ti->sgttyb);
 	ioctl(SHTTY, TIOCLSET, &ti->lmodes);
 	ioctl(SHTTY, TIOCSETC, &ti->tchars);
 	ioctl(SHTTY, TIOCSLTC, &ti->ltchars);
+#  endif
 # endif
 #endif
     }
@@ -919,8 +927,10 @@ void
 adjustwinsize(int from)
 {
     static int getwinsz = 1;
+#ifdef TIOCGWINSZ
     int ttyrows = shttyinfo.winsize.ws_row;
     int ttycols = shttyinfo.winsize.ws_col;
+#endif
     int resetzle = 0;
 
     if (getwinsz || from == 1) {
@@ -2900,6 +2910,7 @@ spdist(char *s, char *t, int thresh)
 void
 setcbreak(void)
 {
+#if !defined(_WIN32)
     struct ttyinfo ti;
 
     ti = shttyinfo;
@@ -2911,6 +2922,7 @@ setcbreak(void)
     ti.sgttyb.sg_flags |= CBREAK;
 #endif
     settyinfo(&ti);
+#endif
 }
 
 /* give the tty to some process */
@@ -2919,6 +2931,9 @@ setcbreak(void)
 void
 attachtty(pid_t pgrp)
 {
+#if defined(_WIN32)
+    /* UNREFERENCED_PARAMETER(pgrp); */
+#else
     static int ep = 0;
 
     if (jobbing) {
@@ -2948,6 +2963,7 @@ attachtty(pid_t pgrp)
 	    }
 	}
     }
+#endif
 }
 
 /* get the process group associated with the tty */
@@ -2956,6 +2972,9 @@ attachtty(pid_t pgrp)
 pid_t
 gettygrp(void)
 {
+#if defined(_WIN32)
+    return 0;
+#else
     pid_t arg;
 
     if (SHTTY == -1)
@@ -2968,6 +2987,7 @@ gettygrp(void)
 #endif
 
     return arg;
+#endif
 }
 
 /* Return the output baudrate */

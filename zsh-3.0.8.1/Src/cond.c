@@ -70,10 +70,14 @@ evalcond(Cond c)
 	return (S_ISDIR(dostat(c->left)));
     case 'f':
 	return (S_ISREG(dostat(c->left)));
+#if defined(S_ISGID)
     case 'g':
 	return (!!(dostat(c->left) & S_ISGID));
+#endif
+#if defined(S_ISVTX)
     case 'k':
 	return (!!(dostat(c->left) & S_ISVTX));
+#endif
     case 'n':
 	return (!!strlen(c->left));
     case 'o':
@@ -90,8 +94,10 @@ evalcond(Cond c)
 #else
 	return 0;   /* some versions of SCO are missing S_ISSOCK */
 #endif
+#if defined(S_ISUID)
     case 'u':
 	return (!!(dostat(c->left) & S_ISUID));
+#endif
     case 'w':
 	return (doaccess(c->left, W_OK));
     case 'x':

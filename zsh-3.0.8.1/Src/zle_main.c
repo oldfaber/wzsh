@@ -65,6 +65,7 @@ static int delayzsetterm;
 void
 setterm(void)
 {
+#if !defined(_WIN32)
     struct ttyinfo ti;
 
 #if defined(FIONREAD)
@@ -200,6 +201,7 @@ setterm(void)
 #endif
 
     settyinfo(&ti);
+#endif /* _WIN32, i.e. this function is void */
 }
 
 static char *kungetbuf;
@@ -338,8 +340,10 @@ getkey(int keytmout)
 		errflag = 0;
 		errno = old_errno;
 		return EOF;
+#if !defined(_WIN32)
 	    } else if (errno == EWOULDBLOCK) {
 		fcntl(0, F_SETFL, 0);
+#endif
 	    } else if (errno == EIO && !die) {
 		ret = opts[MONITOR];
 		opts[MONITOR] = 1;

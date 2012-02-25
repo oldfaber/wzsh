@@ -853,6 +853,7 @@ vipoundinsert(void)
 void
 viquotedinsert(void)
 {
+#if !defined(_WIN32)
 #ifndef HAS_TIO
     struct sgttyb sob;
 #endif
@@ -874,4 +875,5 @@ viquotedinsert(void)
 	feep();
     else
 	selfinsert();
+#endif
 }

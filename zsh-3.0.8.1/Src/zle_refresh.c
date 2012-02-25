@@ -246,9 +246,13 @@ refresh(void)
     cost = 0;			/* reset */
 #endif
 
+#if defined(_WIN32)
+    oxtabs = 0;
+#else 
 /* Nov 96: <mason>  I haven't checked how complete this is.  sgtty stuff may
    or may not work */
     oxtabs = ((SGTTYFLAG & SGTABTYPE) == SGTABTYPE);
+#endif
 
     cleareol = 0;		/* unset */
     more_start = more_end = 0;	/* unset */

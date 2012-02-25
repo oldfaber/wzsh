@@ -383,7 +383,7 @@ struct timezone {
  * (or, with 64-bit support on 32-bit systems, maybe -LONG_LONG_MAX-1) *
  * converted to printable decimal form including the sign and the      *
  * terminating null character. Below 0.30103 > lg 2.                   */
-#define DIGBUFSIZE ((int) (((SIZEOF_ZLONG * 8) - 1) * 0.30103) + 3)
+#define DIGBUFSIZE ((int) (((SIZEOF_ZLONG * 8) - 1) * 30103/100000) + 3)
 
 /* If your stat macros are broken, we will *
  * just undefine them.                     */
