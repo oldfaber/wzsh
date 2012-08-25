@@ -87,7 +87,8 @@
     if (!--queueing_enabled) { \
 	while (queue_front != queue_rear) {      /* while signals in queue */ \
 	    sigset_t oset; \
-	    queue_front = ++queue_front % MAX_QUEUE_SIZE; \
+	    queue_front++; \
+	    queue_front = queue_front % MAX_QUEUE_SIZE; \
 	    oset = signal_setmask(signal_mask_queue[queue_front]); \
 	    handler(signal_queue[queue_front]);  /* handle queued signal   */ \
 	    signal_setmask(oset); \
