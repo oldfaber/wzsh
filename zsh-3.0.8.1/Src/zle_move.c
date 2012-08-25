@@ -30,7 +30,7 @@
 #define ZLE
 #include "zsh.h"
 
-static vimarkcs[27], vimarkline[27];
+static int vimarkcs[27], vimarkline[27];
 
 /**/
 void
