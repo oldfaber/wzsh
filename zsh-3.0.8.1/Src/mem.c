@@ -395,6 +395,27 @@ ztrdup(const char *s)
     return t;
 }
 
+#if defined(_WIN32)
+/**/
+char *
+ztrdupp(const char *s)
+{
+    char *t, *p;
+
+    if (!s)
+	return NULL;
+    t = (char *)zalloc(strlen(s) + 1);
+    p = t;
+    while (*s) {
+	*p = (*s == '\\' ? '/' : *s);
+	p++;
+	s++;
+    }
+    *p = 0;
+    return t;
+}
+#endif
+
 #ifdef ZSH_MEM
 
 /*
