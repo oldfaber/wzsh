@@ -523,7 +523,7 @@ pushinput(void)
 
 /**/
 void
-getline(void)
+zgetline(void)
 {
     char *s = (char *)getlinknode(bufstack);
 
