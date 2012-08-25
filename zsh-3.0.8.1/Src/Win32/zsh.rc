@@ -1,0 +1,54 @@
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
+#define VERSTRING "3.0.8"
+
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+IDI_ICON1 ICON "zsh.ico"
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION 3, 0, 8, 1
+PRODUCTVERSION 3, 0, 8, 1
+FILEOS VOS_NT_WINDOWS32
+FILETYPE VFT_APP
+{
+ BLOCK "StringFileInfo"
+ {
+  BLOCK "000004E4"
+  {
+   VALUE "CompanyName", "Zsh.org\x0"
+   VALUE "FileDescription", "The Z Shell\x0"
+#if defined(DEBUG) || defined(W32DEBUG)
+# define XDBG   " (debug)"
+#else
+# define XDBG   ""
+#endif
+#if defined(__MINGW32__) && !defined(__MINGW64__)
+   VALUE "FileVersion", VERSTRING " (gcc)" XDBG "\x0"
+#endif
+#if defined(__CYGWIN__)
+   VALUE "FileVersion", VERSTRING " (cygwin)" XDBG "\x0"
+#endif
+#if defined(__MINGW64__)
+   VALUE "FileVersion", VERSTRING " (gcc64)" XDBG "\x0"
+#endif
+#if defined(_MSC_VER)
+# if defined(MSC64)
+   VALUE "FileVersion", VERSTRING " (cl64)" XDBG "\x0"
+# else
+   VALUE "FileVersion", VERSTRING " (cl)" XDBG "\x0"
+# endif
+#endif
+   VALUE "InternalName", "Zsh\x0"
+   VALUE "LegalCopyright", "© Not yet\x0"
+   VALUE "OriginalFilename", "Zsh.exe\x0"
+   VALUE "ProductName", "Z Shell\x0"
+  }
+ }
+ BLOCK "VarFileInfo"
+ {
+   VALUE "Translation", 0x0, 1252
+ }
+}
+
+// Manifest
+CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "zsh.exe.manifest"

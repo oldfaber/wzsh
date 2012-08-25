@@ -1,0 +1,85 @@
+
+# clean removes *.$(oo) and if $(oo) is null will remove the directories !
+oo = obj
+
+ifeq ($(findstring MSC,$(C_ENV)),MSC)
+CFLAGS   = -nologo -W3 -GF -EHsc- 
+LDFLAGS  = -nologo -Fm
+DEFS     += -D_CRT_SECURE_NO_DEPRECATE=1 -D_CRT_NONSTDC_NO_DEPRECATE=1
+LIBS     = kernel32.lib user32.lib advapi32.lib shell32.lib shlwapi.lib mpr.lib oldnames.lib
+CPPFLAGS =
+# use RELEASE=y to make a release build
+ifdef RELEASE
+# test RELEASE optimization(s)
+# CFLAGS   += -O2 -MT 
+# -Og produces a buggy shell
+CFLAGS   += -Oityb2 -Gs65536 -MT 
+LIBS     += smalheap.obj libcmt.lib 
+else
+# use -Fa to get an assembly listing
+DEFS     += 
+# DEBUG optimization
+CFLAGS   += -Zi -MTd -Ois 
+LDFLAGS  += -Zi
+LIBS     += libcmtd.lib 
+endif
+# use RELEASE=y SYMBOLS=y to make a release build + debugger symbols and ntdbg
+ifdef SYMBOLS
+DEFS     += -DW32DEBUG
+CFLAGS   += -Zi 
+LDFLAGS  += -Zi
+endif
+SPECIALCFLAG = -GS-
+# to use smalheap -force is needed !
+CLFLAGS  := -link -force -safeseh:NO -nodefaultlib -incremental:NO -stack:1048576,524288 
+ifeq ($(C_ENV),MSC64)
+CLFLAGS  +=-machine:X64
+endif
+OUTOPT   = -Fe
+# resources
+RC = rc 
+# tell the resource compiler about DEBUG and 64 bit version
+RCOPTS = -d_MSC_VER $(DEFS) -d$(C_ENV)
+NTRES = $(windir)/zsh.res
+OUTNTRES =
+endif
+
+# for MINGW32 and MINGW64 (defaults to 64 bit!)
+ifeq ($(findstring MINGW,$(C_ENV)),MINGW)
+oo = o
+CFLAGS   = -Wall -Wsign-compare -fmerge-constants #-Wextra -xc++
+ifeq ($(C_ENV),MINGW32)
+ENTRY    = _main_entry
+else
+ENTRY    = main_entry
+endif
+LDFLAGS  = -static-libgcc -Wl,--stack,0x100000 
+CPPFLAGS =
+DEFS     += -D_MT
+ifdef RELEASE
+# -Os and -O2 produce a non working program
+DEFS     += -DW32DEBUG
+CFLAGS   +=  -O
+else
+DEFS     += 
+# use -g for gdb, -gstabs for DrMingw
+CFLAGS   += -g -O
+LDFLAGS  += -g 
+endif
+# use RELEASE=y SYMBOLS=y to make a release build + debugger symbols
+ifdef SYMBOLS
+CFLAGS   += -g #-gstabs 
+LDFLAGS  += -g
+endif
+SPECIALCFLAG =
+LIBS     = -lmpr
+CLFLAGS  =
+OUTOPT   = -o
+# resources
+RC = windres #--use-temp-file
+RCOPTS += $(DEFS)
+NTRES = zsh.o
+OUTNTRES = $(NTRES)
+endif
+
+vpath %.c %.h $(windir) 
