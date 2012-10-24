@@ -246,7 +246,11 @@ struct timezone {
 #endif   /* HAVE_TERMIOS_H */
 
 #ifdef HAVE_TERMCAP_H
+# if defined(__CYGWIN__)
+#include <ncurses/termcap.h>
+# else
 #include <termcap.h>
+# endif
 #endif
 
 #if defined(GWINSZ_IN_SYS_IOCTL) || defined(CLOBBERS_TYPEAHEAD)
@@ -268,7 +272,11 @@ struct timezone {
 #ifdef HAVE_UTMPX_H
 # include <utmpx.h>
 # define STRUCT_UTMP struct utmpx
-# define ut_time ut_xtime
+# if defined(__INTERIX)
+#  define ut_time ut_tv.tv_sec
+# else
+#  define ut_time ut_xtime
+# endif
 #else
 # include <utmp.h>
 # define STRUCT_UTMP struct utmp
@@ -492,3 +500,16 @@ extern short ospeed;
 #if defined(CONFIG_LOCALE) && defined(HAVE_SETLOCALE) && defined(LC_ALL)
 # define USE_LOCALE 1
 #endif /* CONFIG_LOCALE && HAVE_SETLOCALE && LC_ALL */
+
+/* from zsh 4.3.x */
+#if !defined(IS_DIRSEP)
+# if defined(__CYGWIN__) || defined(_WIN32)
+#  define IS_DIRSEP(c) ((c) == '/' || (c) == '\\')
+# else
+#  define IS_DIRSEP(c) ((c) == '/')
+# endif
+#endif
+
+#ifdef __CYGWIN__
+#include <sys/cygwin.h>
+#endif
