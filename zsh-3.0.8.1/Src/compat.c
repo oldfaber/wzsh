@@ -108,6 +108,10 @@ char *
 zgetcwd(void)
 {
     static char buf0[PATH_MAX];
+#if defined(_WIN32)
+    getcwd(buf0, PATH_MAX);
+    return ztrdup(buf0);
+#else
     char *buf2 = buf0 + 1;
     char buf3[PATH_MAX];
     struct stat sbuf;
@@ -183,5 +187,6 @@ zgetcwd(void)
 	strcat(buf3, buf2);
 	strcpy(buf2, buf3);
     }
+#endif
 }
 
