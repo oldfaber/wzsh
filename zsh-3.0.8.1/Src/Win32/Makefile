@@ -37,7 +37,7 @@ prefix      = /bin
 exec_prefix = ${prefix}
 bindir      = ${exec_prefix}/bin
 
-DEFS        = -DHAVE_CONFIG_H 
+DEFS        = -DHAVE_CONFIG_H -DSTDCRTLIB
 
 windir     = $(srcdir)/win32
 DEFS += 
@@ -89,7 +89,7 @@ input.c jobs.c lex.c linklist.c loop.c math.c mem.c params.c parse.c \
 signals.c subst.c text.c utils.c watch.c zle_bindings.c zle_hist.c \
 zle_main.c zle_misc.c zle_move.c zle_refresh.c zle_tricky.c zle_utils.c \
 zle_vi.c zle_word.c \
-signal.c unistd.c ntermcap.c tconsole.c killnice.c dirent.c
+signal.c unistd.c ntermcap.c tconsole.c killnice.c dirent.c access.c fstat.c
 
 # generated prototypes
 PROTO = builtin.pro compat.pro cond.pro exec.pro glob.pro hashtable.pro \
