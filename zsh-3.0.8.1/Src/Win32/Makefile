@@ -90,7 +90,7 @@ signals.c subst.c text.c utils.c watch.c zle_bindings.c zle_hist.c \
 zle_main.c zle_misc.c zle_move.c zle_refresh.c zle_tricky.c zle_utils.c \
 zle_vi.c zle_word.c \
 signal.c unistd.c ntermcap.c tconsole.c killnice.c dirent.c access.c fstat.c \
-ntdbg.c shell_init.c 00_entry.c fork.c fmalloc.c io.c zz_ntb2.c
+ntdbg.c shell_init.c 00_entry.c fork.c fmalloc.c io.c stdio.c zsh_support.c zz_ntb2.c
 
 # generated prototypes
 PROTO = builtin.pro compat.pro cond.pro exec.pro glob.pro hashtable.pro \
