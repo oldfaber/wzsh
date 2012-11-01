@@ -1,6 +1,6 @@
 # mingw-configure
 #       setup some variables
-#       build the firk library
+#       build the dummy fork library
 #       call configure
 
 IPATH="$PWD/Src/Win32/include"
