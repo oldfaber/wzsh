@@ -394,6 +394,7 @@ int unsetenv(const char *name)
 }
 
 
+#if defined(STDCRTLIB)
 /* this function must be replaced with a real implementation */
 int fork(void)
 {
@@ -416,6 +417,7 @@ int iodupfd(int fd, int fdoffset)
         errno = ENOMEM;
         return -1;
 }
+#endif
 
 
 #if defined(ZSHV5)
