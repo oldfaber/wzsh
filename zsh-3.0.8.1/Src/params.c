@@ -90,7 +90,15 @@ createparamtable(void)
 	setiparam("BAUD", getbaudrate(&shttyinfo));  /* get the output baudrate */
 #endif
 	setsparam("FCEDIT", ztrdup(DEFAULT_FCEDIT));
+#if defined(_WIN32)
+	{
+	    char temp[PATH_MAX];
+	    char *ptr = xgetenvpath("TEMP", temp, sizeof(temp));
+	    setsparam("TMPPREFIX", ztrdup(ptr ? temp : DEFAULT_TMPPREFIX));
+	}
+#else
 	setsparam("TMPPREFIX", ztrdup(DEFAULT_TMPPREFIX));
+#endif
 	setsparam("TIMEFMT", ztrdup(DEFAULT_TIMEFMT));
 	setsparam("WATCHFMT", ztrdup(DEFAULT_WATCHFMT));
 	setsparam("HOST", ztrdup(hostnam));
@@ -1821,18 +1829,36 @@ replenv(char *e, char *value)
 {
     char **ep, *s;
     int len_value;
+#if defined(_WIN32)
+    char *p1, p2[256];
+#endif
 
     for (ep = environ; *ep; ep++)
 	if (*ep == e) {
 	    for (len_value = 0, s = value;
 		 *s && (*s++ != Meta || *s++ != 32); len_value++);
 	    s = e;
+#if defined(_WIN32)
+	    p1 = p2;
+	    while (*s != '=') {
+	    	*p1++ = *s++;
+	    }
+	    s++;
+	    *p1 = 0;
+#else
 	    while (*s++ != '=');
+#endif
 	    *ep = (char *) zrealloc(e, s - e + len_value + 1);
 	    s = s - e + *ep - 1;
+#if defined(_WIN32)
+	    p1 = s + 1;
+#endif
 	    while (*s++)
 		if ((*s = *value++) == Meta)
 		    *s = *value++ ^ 32;
+#if defined(_WIN32)
+	    setenv(p2, p1, 1);
+#endif
 	    return *ep;
 	}
     return NULL;
@@ -1879,6 +1905,9 @@ addenv(char *name, char *value)
 	for (s = *ep, t = name; *s && *s == *t; s++, t++);
 	if (*s == '=' && !*t) {
 	    zsfree(*ep);
+#if defined(_WIN32)
+	    setenv(name, value, 1);
+#endif
 	    return *ep = mkenvstr(name, value);
 	}
     }
@@ -1889,6 +1918,9 @@ addenv(char *name, char *value)
 
     /* Now add it at the end */
     ep = environ + num_env;
+#if defined(_WIN32)
+    setenv(name, value, 1);
+#endif 
     *ep = mkenvstr(name, value);
     *(ep + 1) = NULL;
     return *ep;
@@ -1907,8 +1939,19 @@ delenv(char *x)
 	if (*ep == x)
 	    break;
     }
-    if (*ep)
+    if (*ep) {
+#if defined(_WIN32)
+	/* max environment variable size */
+	char tbuf[8193];
+	char *p = tbuf;
+
+	while (*x && (*x != '='))
+		*p++ = *x++;
+	*p = 0;
+	unsetenv(tbuf);
+#endif
 	for (; (ep[0] = ep[1]); ep++);
+    }
 }
 
 /**/

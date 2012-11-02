@@ -90,11 +90,17 @@ extern FILE* nt_stdin, *nt_stdout, *nt_stderr;
 # define stderr (nt_stderr)
 #endif
 
+#define malloc fmalloc
+#define free   ffree
+#define realloc frealloc
+#define calloc fcalloc
+
 /* fstat has a body in stdio.h for MS compiler */
 #define fstat(a,b)  nt_fstat(a,b)
 #define stat(a,b)   nt_stat(a,b)
 #define lstat(a,b)  nt_stat(a,b)
 #define isatty      nt_isatty
+#define execve(f,a,e) nt_execve(f,a,e)
 
 #ifdef	__cplusplus
 extern "C" {

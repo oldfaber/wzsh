@@ -30,7 +30,7 @@
 #include "zsh.h"
 
 /* Print an error */
- 
+
 /**/
 void
 zerr(char *fmt, char *str, int num)
@@ -403,7 +403,7 @@ get_username(void)
 #ifdef HAVE_GETPWUID
     struct passwd *pswd;
     uid_t current_uid;
- 
+
     current_uid = getuid();
     if (current_uid != cached_uid) {
 	cached_uid = current_uid;
@@ -500,7 +500,12 @@ adduserdir(char *s, char *t, int flags, int always)
 	    !nameddirtab->getnode2(nameddirtab, s))
 	return;
 
+#if defined(_WIN32)
+    /* @@@@ !is_win32abspath(t) ??? */
+    if (!t || (*t != '/' && *t != '\\' && t[1] != ':') || strlen(t) >= PATH_MAX) {
+#else
     if (!t || *t != '/' || strlen(t) >= PATH_MAX) {
+#endif
 	/* We can't use this value as a directory, so simply remove *
 	 * the corresponding entry in the hash table, if any.       */
 	HashNode hn = nameddirtab->removenode(nameddirtab, s);
@@ -537,7 +542,11 @@ getnameddir(char *name)
      * return the new value.                                           */
     if ((pm = (Param) paramtab->getnode(paramtab, name)) &&
 	    (PM_TYPE(pm->flags) == PM_SCALAR) &&
+#if defined(_WIN32)
+	    (str = getsparam(name)) && is_win32abspath(str)) {
+#else
 	    (str = getsparam(name)) && *str == '/') {
+#endif
 	adduserdir(name, str, 0, 1);
 	return str;
     }
@@ -817,7 +826,7 @@ gettyinfo(struct ttyinfo *ti)
 	ioctl(SHTTY, TCGETA, &ti->tio);
 # else
 #  if defined(_WIN32)
-	/* UNREFERENCED_PARAMETER(ti); */
+	UNREFERENCED_PARAMETER(ti);
 #  else
 	ioctl(SHTTY, TIOCGETP, &ti->sgttyb);
 	ioctl(SHTTY, TIOCLGET, &ti->lmodes);
@@ -851,7 +860,7 @@ settyinfo(struct ttyinfo *ti)
 	ioctl(SHTTY, TCSETA, &ti->tio);
 # else
 #  if defined(_WIN32)
-	/* UNREFERENCED_PARAMETER(ti); */
+	UNREFERENCED_PARAMETER(ti);
 #  else
 	ioctl(SHTTY, TIOCSETN, &ti->sgttyb);
 	ioctl(SHTTY, TIOCLSET, &ti->lmodes);
@@ -878,6 +887,10 @@ adjustlines(int signalled)
     else
 	shttyinfo.winsize.ws_row = lines;
 #endif /* TIOCGWINSZ */
+#if defined(_WIN32)
+    UNREFERENCED_PARAMETER(signalled);
+    lines = nt_getlines();
+#endif
     if (lines <= 0) {
 	DPUTS(signalled, "BUG: Impossible TIOCGWINSZ rows");
 	lines = tclines > 0 ? tclines : 24;
@@ -902,6 +915,10 @@ adjustcolumns(int signalled)
     else
 	shttyinfo.winsize.ws_col = columns;
 #endif /* TIOCGWINSZ */
+#if defined(_WIN32)
+    UNREFERENCED_PARAMETER(signalled);
+    columns = nt_getcolumns();
+#endif
     if (columns <= 0) {
 	DPUTS(signalled, "BUG: Impossible TIOCGWINSZ cols");
 	columns = tccolumns > 0 ? tccolumns : 80;
@@ -1063,16 +1080,16 @@ zclose(int fd)
 
 /* Get a file name relative to $TMPPREFIX which *
  * is unique, for use as a temporary file.      */
- 
+
 /**/
 char *
 gettempname(void)
 {
     char *s;
- 
+
     if (!(s = getsparam("TMPPREFIX")))
 	s = DEFAULT_TMPPREFIX;
- 
+
 #ifdef HAVE__MKTEMP
     /* Zsh uses mktemp() safely, so silence the warnings */
     return ((char *) _mktemp(dyncat(unmeta(s), "XXXXXX")));
@@ -1094,7 +1111,7 @@ has_token(const char *s)
 }
 
 /* Delete a character in a string */
- 
+
 /**/
 void
 chuck(char *str)
@@ -1236,7 +1253,7 @@ rlim_t
 zstrtorlimit(const char *s, char **t, int base)
 {
     rlim_t ret = 0;
- 
+
     if (!base) {
 	if (*s != '0')
 	    base = 10;
@@ -2667,7 +2684,11 @@ void
 feep(void)
 {
     if (isset(BEEP))
+#if defined(_WIN32)
+	win32beep();
+#else
 	write(2, "\07", 1);
+#endif 
 }
 
 /**/
@@ -2932,7 +2953,7 @@ void
 attachtty(pid_t pgrp)
 {
 #if defined(_WIN32)
-    /* UNREFERENCED_PARAMETER(pgrp); */
+    UNREFERENCED_PARAMETER(pgrp);
 #else
     static int ep = 0;
 
@@ -3377,7 +3398,7 @@ nicezputs(char const *s, FILE *stream)
 	if (itok(c)) {
 	    if (c <= Comma)
 		c = ztokens[c - Pound];
-	    else 
+	    else
 		continue;
 	}
 	if (c == Meta)
@@ -3401,7 +3422,7 @@ niceztrlen(char const *s)
 	if (itok(c)) {
 	    if (c <= Comma)
 		c = ztokens[c - Pound];
-	    else 
+	    else
 		continue;
 	}
 	if (c == Meta)

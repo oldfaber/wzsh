@@ -314,6 +314,11 @@ getkey(int keytmout)
 	    return (r <= 0) ? EOF : cc;
 # endif
 #endif
+#if defined(_WIN32)
+	    /* HAVE_SELECT is not defined (does not work for fds, nor HAS_TIO */
+	    if (waitkey(SHTTY, exp100ths))
+		return EOF;
+#endif
 	}
 	while ((r = read(SHTTY, &cc, 1)) != 1) {
 	    if (r == 0) {
@@ -556,6 +561,9 @@ getkeycmd(void)
 {
     int ret;
     static int hops = 0;
+#if defined(_WIN32)
+    __nt_want_vcode = 1;
+#endif
 
     cky = NULL;
     if (!keybuf)
@@ -565,7 +573,16 @@ getkeycmd(void)
     if ((c = getkey(0)) < 0)
 	return -1;
     keybuf[0] = c;
-    if ((ret = bindtab[c]) == z_prefix) {
+    ret = bindtab[c];
+#if defined(_WIN32)
+    if (__nt_want_vcode & 0x02) {
+	int idx = (__nt_want_vcode & (~0 << 8));
+	idx >>=8;
+	ret = ntvirtualbind[idx];
+    }
+    __nt_want_vcode = 0;
+#endif 
+    if (ret == z_prefix) {
 	int lastlen = 0, t0 = 1, firstc = c;
 	Key ky;
 

@@ -1140,7 +1140,11 @@ cd_do_chdir(char *cnam, char *dest)
 				    (dest[2] == '/' || !dest[2])));
 
     /* if we have an absolute path, use it as-is only */
+#if defined(_WIN32)
+    if (is_win32abspath(dest)) {
+#else
     if (*dest == '/') {
+#endif
 	if ((ret = cd_try_chdir(NULL, dest)))
 	    return ret;
 	zwarnnam(cnam, "%e: %s", dest, errno);
@@ -1245,8 +1249,20 @@ cd_try_chdir(char *pfix, char *dest)
 
     /* if the path is absolute, the test and return value are (relatively)
     simple */
+#if defined(_WIN32)
+    /* see the "fix cd /. -amol 4/14/97" */
+    if (is_win32abspath(buf2)) {
+	if (chdir(unmeta(buf)) < 0)
+	    return NULL;
+	else {
+	    getcwd(buf2, PATH_MAX);
+	    return ztrdup(buf2);
+	}
+    }
+#else
     if (buf2[0] == '/')
 	return (chdir(unmeta(buf)) == -1) ? NULL : ztrdup(buf2);
+#endif
     /* If the path is a simple `downward' relative path, the test is again
     fairly simple.  The relative path must be added to the end of the current
     directory. */
@@ -1256,7 +1272,14 @@ cd_try_chdir(char *pfix, char *dest)
 	if (*buf2) {
 	    if (strlen(pwd) + strlen(buf2) + 1 >= PATH_MAX)
 		return NULL;
+#if defined(_WIN32)
+    	    if ((pwd[3] == 0) && (pwd[1] == ':') && (pwd[2] == '/'))
+		sprintf(buf, "%s%s", pwd, buf2);
+	    else
+		sprintf(buf, "%s/%s", pwd, buf2);
+#else
 	    sprintf(buf, "%s/%s", (!strcmp("/", pwd)) ? "" : pwd, buf2);
+#endif
 	} else
 	    strcpy(buf, pwd);
 	return ztrdup(buf);
@@ -1275,6 +1298,12 @@ cd_try_chdir(char *pfix, char *dest)
     strcpy(s, buf2);
     /* For some reason, this chdir must be attempted with both the newly
     created path and the original non-normalised version. */
+#if defined(_WIN32)
+    if (buf[1]==':' && buf[2] == '\0') {
+	buf[2] = '/';
+	buf[3]='\0';
+    }
+#endif
     if (chdir(unmeta(buf)) != -1 || chdir(unmeta(dest)) != -1)
 	return ztrdup(buf);
     return NULL;
@@ -1320,6 +1349,9 @@ cd_new_pwd(int func, LinkNode dir)
     current (i.e. new) pwd */
     zsfree(oldpwd);
     oldpwd = pwd;
+#if defined(_WIN32)
+    caseify_pwd(new_pwd);
+#endif
     pwd = new_pwd;
     /* update the PWD and OLDPWD shell parameters */
     if ((pm = (Param) paramtab->getnode(paramtab, "PWD")) &&
@@ -5037,9 +5069,15 @@ bin_read(char *name, char **args, char *ops, int func)
 	bptr = buf = (char *)zalloc(nchars+1);
 
 	do {
+#if defined(_WIN32)
+	    /* If read returns 0, is end of file */
+	    if ((val = readfile(readfd, bptr, nchars)) <= 0)
+		break;
+#else
 	    /* If read returns 0, is end of file */
 	    if ((val = read(readfd, bptr, nchars)) <= 0)
 		break;
+#endif
 	    
 	    /* decrement number of characters read from number required */
 	    nchars -= val;
@@ -5382,7 +5420,11 @@ zread(void)
     }
     for (;;) {
 	/* read a character from readfd */
+#if defined(_WIN32)
+	switch (readfile(readfd, &cc, 1)) {
+#else
 	switch (read(readfd, &cc, 1)) {
+#endif
 	case 1:
 	    /* return the character read */
 	    return STOUC(cc);

@@ -38,6 +38,9 @@ main(int argc, char **argv)
 {
     char **t;
     int t0;
+#if defined(_WIN32)
+    nt_init(&argv);
+#endif
 #ifdef USE_LOCALE
     setlocale(LC_ALL, "");
 #endif
@@ -358,6 +361,19 @@ init_io(void)
     /* Send xtrace output to stderr -- see execcmd() */
     xtrerr = stderr;
 
+#if defined(_WIN32)
+    {
+	int fd;
+	SHTTY = movefd(open("CONIN$", O_RDONLY));
+	fd = open("CONOUT$", O_WRONLY);
+	if (interact && SHTTY != -1) {
+	    shout = fdopen(fd,"w");
+	    if(!shout)
+		opts[USEZLE] = 0;
+	} else
+	    opts[USEZLE] = 0;
+    }
+#else
     /* Make sure the tty is opened read/write. */
     if (isatty(0)) {
 	zsfree(ttystrname);
@@ -422,6 +438,7 @@ init_io(void)
 	    opts[USEZLE] = 0;
     } else
 	opts[USEZLE] = 0;
+#endif /* _WIN32 */
 
 #ifdef JOB_CONTROL
     /* If interactive, make the shell the foreground process */

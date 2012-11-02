@@ -2,6 +2,8 @@
 # clean removes *.$(oo) and if $(oo) is null will remove the directories !
 oo = obj
 
+DEFS+=-DLIB_HAS_STDIO -DSHELL -DW32DEBUG
+
 ifeq ($(findstring MSC,$(C_ENV)),MSC)
 CFLAGS   = -nologo -W3 -GF -EHsc- 
 LDFLAGS  = -nologo -Fm
@@ -31,7 +33,7 @@ LDFLAGS  += -Zi
 endif
 SPECIALCFLAG = -GS-
 # to use smalheap -force is needed !
-CLFLAGS  := -link -force -safeseh:NO -nodefaultlib -incremental:NO -stack:1048576,524288 
+CLFLAGS  := -link -force -safeseh:NO -nodefaultlib -incremental:NO -entry:main_entry -stack:1048576,524288 
 ifeq ($(C_ENV),MSC64)
 CLFLAGS  +=-machine:X64
 endif
@@ -53,7 +55,7 @@ ENTRY    = _main_entry
 else
 ENTRY    = main_entry
 endif
-LDFLAGS  = -static-libgcc -Wl,--stack,0x100000 
+LDFLAGS  = -static-libgcc -Wl,--entry=$(ENTRY) -Wl,--stack,0x100000 -Wl,-M
 CPPFLAGS =
 DEFS     += -D_MT
 ifdef RELEASE

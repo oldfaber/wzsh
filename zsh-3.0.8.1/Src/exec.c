@@ -227,7 +227,7 @@ zexecve(char *pth, char **argv)
 	    break;
     buf[0] = '_';
     buf[1] = '=';
-    if (*pth == '/')
+    if (IS_DIRSEP(*pth))
 	strcpy(buf + 2, pth);
     else
 	sprintf(buf + 2, "%s/%s", pwd, pth);
@@ -367,7 +367,7 @@ execute(Cmdnam not_used_yet, int dash)
 	_exit(1);
     }
     for (s = arg0; *s; s++)
-	if (*s == '/') {
+	if (IS_DIRSEP(*s)) {
 	    errno = zexecve(arg0, argv);
 	    if (arg0 == s || unset(PATHDIRS) ||
 		(arg0[0] == '.' && (arg0 + 1 == s ||
@@ -430,7 +430,11 @@ execute(Cmdnam not_used_yet, int dash)
     _exit(1);
 }
 
+#if defined(_WIN32)
+#define try(X) { if (iscom(X)) return ztrdupp(X); }
+#else
 #define try(X) { if (iscom(X)) return ztrdup(X); }
+#endif
 
 /* get the full pathname of an external command */
 
@@ -448,7 +452,7 @@ findcmd(char *arg0)
     if ((int) strlen(arg0) > PATH_MAX)
 	return NULL;
     for (s = arg0; *s; s++)
-	if (*s == '/') {
+	if (IS_DIRSEP(*s)) {
 	    try(arg0);
 	    if (arg0 == s || unset(PATHDIRS)) {
 		return NULL;
@@ -493,18 +497,27 @@ findcmd(char *arg0)
 int
 iscom(char *s)
 {
-    struct stat statbuf;
     char *us = unmeta(s);
+#if defined(_WIN32)
+    /* our access() is always false for directories */
+    return (access(us, X_OK) == 0);
+#else
+    struct stat statbuf;
 
-    return (access(us, X_OK) == 0 && stat(us, &statbuf) >= 0 &&
-	    S_ISREG(statbuf.st_mode));
+    return (access(us, X_OK) == 0 && stat(us, &statbuf) >= 0 && S_ISREG(statbuf.st_mode));
+#endif
 }
 
 /**/
 int
 isrelative(char *s)
 {
+    /* @@@@ use IS_DIRSEP() ? */
+#if defined(_WIN32)
+    if ((*s != '/') && (s[1] && s[1] != ':'))
+#else
     if (*s != '/')
+#endif 
 	return 1;
     for (; *s; s++)
 	if (*s == '.' && s[-1] == '/' &&
@@ -523,7 +536,7 @@ hashcmd(char *arg0, char **pp)
     char **pq;
 
     for (; *pp; pp++)
-	if (**pp == '/') {
+	if (IS_DIRSEP(**pp)) {
 	    s = buf;
 	    strucpy(&s, *pp);
 	    *s++ = '/';
@@ -2216,7 +2229,11 @@ getherestr(struct redir *fn)
 	return -1;
     write(fd, t, len);
     close(fd);
+#if defined(_WIN32)
+    fd = open(s, O_RDONLY | O_TEMPORARY);
+#else
     fd = open(s, O_RDONLY);
+#endif
     unlink(s);
     return fd;
 }

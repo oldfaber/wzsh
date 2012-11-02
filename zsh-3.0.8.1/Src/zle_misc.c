@@ -1045,6 +1045,19 @@ putpromptchar(int doprint, int endchar)
 		    }
 		if (*ss == '/' && ss[1] && (ss != buf3))
 		    ss++;
+#if defined(_WIN32)
+		{
+		    char *tmp;
+		    if (ss == &buf3[3]) {
+			ss -= 3;
+		    }
+		    if (ss != buf3)  {
+			tmp = fmt_pwd_for_prompt(pwd);
+			if (tmp)
+			    stradd(tmp);
+		    }
+		}
+#endif
 		stradd(ss);
 		break;
 	    case 'h':
