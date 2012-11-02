@@ -29,4 +29,4 @@ fi
 # 1 - create the dummy fork library
 ( cd Src/Win32/lib ; $MAKE dummyfork)
 # 2 - generate zsh.exe
-./configure --prefix=/bin --enable-zsh-debug > "$cfgout" 2>&1
+./configure --prefix= --enable-zsh-debug > "$cfgout" 2>&1

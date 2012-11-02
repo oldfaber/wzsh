@@ -1,8 +1,7 @@
 
 # clean removes *.$(oo) and if $(oo) is null will remove the directories !
 oo = obj
-
-DEFS+=-DLIB_HAS_STDIO -DSHELL -DW32DEBUG
+DEFS += -DLIB_HAS_STDIO -DSHELL -DW32DEBUG
 
 ifeq ($(findstring MSC,$(C_ENV)),MSC)
 CFLAGS   = -nologo -W3 -GF -EHsc- 
@@ -21,19 +20,19 @@ else
 # use -Fa to get an assembly listing
 DEFS     += 
 # DEBUG optimization
-CFLAGS   += -Zi -MTd -Ois 
+CFLAGS   += -Zi -MTd -Ois # -TP # compile as C++
 LDFLAGS  += -Zi
 LIBS     += libcmtd.lib 
 endif
 # use RELEASE=y SYMBOLS=y to make a release build + debugger symbols and ntdbg
 ifdef SYMBOLS
-DEFS     += -DW32DEBUG
+DEFS     += 
 CFLAGS   += -Zi 
 LDFLAGS  += -Zi
 endif
 SPECIALCFLAG = -GS-
 # to use smalheap -force is needed !
-CLFLAGS  := -link -force -safeseh:NO -nodefaultlib -incremental:NO -entry:main_entry -stack:1048576,524288 
+CLFLAGS  := -link -safeseh:NO -nodefaultlib -incremental:NO -entry:main_entry -stack:1048576,524288 
 ifeq ($(C_ENV),MSC64)
 CLFLAGS  +=-machine:X64
 endif

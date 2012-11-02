@@ -33,14 +33,14 @@ SHELL = /bin/sh
 top_srcdir = ..
 srcdir     = .
 
-prefix      = /bin
+prefix      = 
 exec_prefix = ${prefix}
 bindir      = ${exec_prefix}/bin
 
-DEFS        = -DHAVE_CONFIG_H -DDEBUG
 
+
+DEFS       = -DHAVE_CONFIG_H -DDEBUG
 windir     = $(srcdir)/win32
-DEFS += 
 
 include win32/Makerules
 
@@ -90,8 +90,10 @@ input.c jobs.c lex.c linklist.c loop.c math.c mem.c params.c parse.c \
 signals.c subst.c text.c utils.c watch.c zle_bindings.c zle_hist.c \
 zle_main.c zle_misc.c zle_move.c zle_refresh.c zle_tricky.c zle_utils.c \
 zle_vi.c zle_word.c \
-signal.c unistd.c ntermcap.c tconsole.c killnice.c dirent.c access.c fstat.c \
-ntdbg.c shell_init.c fork.c fmalloc.c nt_execve.c io.c stdio.c zsh_support.c zz_ntb2.c
+fork.c fmalloc.c io.c signal.c \
+unistd.c ntermcap.c tconsole.c killnice.c dirent.c access.c fstat.c \
+ntdbg.c shell_init.c nt_execve.c stdio.c zsh_support.c \
+zz_ntb2.c
 
 # generated prototypes
 PROTO = builtin.pro compat.pro cond.pro exec.pro glob.pro hashtable.pro \
@@ -102,7 +104,7 @@ zle_misc.pro zle_move.pro zle_refresh.pro zle_tricky.pro zle_utils.pro \
 zle_vi.pro zle_word.pro
 
 # object files
-OBJS = $(notdir $(SRCS:.c=.$(oo)))
+OBJS = $(notdir $(SRCS:.c=.$(oo))) $(NTRES)
 
 # auxiliary files
 AUX = Makefile.in .indent.pro signames.awk rlimits.awk makepro.sed \
@@ -111,27 +113,29 @@ AUX = Makefile.in .indent.pro signames.awk rlimits.awk makepro.sed \
 # all files in this directory included in the distribution
 DIST = $(DIST_HDRS) $(SRCS) $(AUX)
 
-# special sources
-NT_SRCS = #zz_ntb2.c
-# special objects
-NT_OBJS = $(notdir $(NT_SRCS:.c=.$(oo)))
-
 # ========= DEPENDENCIES FOR BUILDING ==========
 
 # default target
 all: zsh
 
-zsh: $(OBJS) $(NT_OBJS) $(NTRES)
-	$(LINK) $(OBJS) $(NT_SRCS:.c=.$(oo)) $(LIBS) $(NTRES) $(CLFLAGS)
+zsh: $(OBJS)
+	$(LINK) $(OBJS) $(LIBS) $(CLFLAGS)
 ifdef MSC_MFT
 	mt.exe -nologo -manifest $(windir)/zsh.exe.manifest -outputresource:"zsh.exe;1"
 endif	
 
-sh: $(OBJS) $(NT_OBJS) $(NTRES)
-	$(LINK) $(OBJS) zz_ntb2.$(oo) $(NTRES) $(LIBS) $(CLFLAGS)
+sh: $(OBJS) $(NTRES)
+	$(LINK) $(OBJS) $(LIBS) $(CLFLAGS)
 ifdef MSC_MFT
 	mt.exe -nologo -manifest $(windir)/zsh.exe.manifest -outputresource:"sh.exe;1"
 endif	
+
+# special build rules
+fork.$(oo): $(windir)/fork.c
+	$(COMPILE) $(SPECIALCFLAG) $(windir)/$*.c
+
+exec.$(oo): exec.c
+	$(COMPILE) $(NOOPTIMIZE) $*.c
 
 # resource rule
 $(NTRES): $(windir)/zsh.rc
@@ -246,14 +250,8 @@ _zle_word.c: zle_word.c ansi2knr
 mostlyclean:
 	rm -f core *.o *~
 
-#clean: mostlyclean
-#	rm -f zsh ansi2knr signames.h rlimits.h _*.c *.pro
-
 clean: 
-	-@rm -rf *.exe *.obj *.map *.$(oo) *.pdb *.ilk *.tds *.ncb $(NTRES)
-
-xclean: 
-	-cd .. && cmd /C "rm -i *.exe *.map *.$(oo) *.pdb *.ilk *.tds *.ncb $(NTRES)"
+	-@rm -rf *.exe *.obj *.o *.map *.pdb *.ilk *.tds *.ncb $(NTRES)
 
 distclean: clean
 	rm -f Makefile
@@ -263,3 +261,24 @@ realclean: distclean
 
 superclean: realclean
 
+# ========== DEPENDENCIES FOR MAINTENANCE ==========
+
+subdir = Src
+
+Makefile: Makefile.in ../config.status
+	cd .. && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= ./config.status
+
+# tag file for vi
+tags: TAGS
+	cd $(srcdir) && ctags -w $(SRCS) $(DIST_HDRS)
+
+# tag file for emacs
+eTAGS: $(SRCS) $(DIST_HDRS)
+	cd $(srcdir) && etags $(SRCS) $(DIST_HDRS)
+
+distdir = ../`cat ../distname`/$(subdir)
+dist: $(DIST)
+	@echo "Copying distribution files in $(subdir)"
+	for file in $(DIST); do    \
+	  cp -p $$file $(distdir); \
+	done
