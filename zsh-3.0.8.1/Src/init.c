@@ -615,9 +615,16 @@ setupvals(void)
     /* Set default path */
     path    = (char **) zalloc(sizeof(*path) * 5);
     path[0] = ztrdup("/bin");
+#if defined(_WIN32)
+    path[1] = ztrdup(get_os_dir("WINDOWS"));
+    path[2] = ztrdup(get_os_dir("SYSTEM"));
+    /* cmd.exe has "." implicitly */
+    path[3] = ztrdup(".");
+#else
     path[1] = ztrdup("/usr/bin");
     path[2] = ztrdup("/usr/ucb");
     path[3] = ztrdup("/usr/local/bin");
+#endif
     path[4] = NULL;
 
     cdpath   = mkarray(NULL);
