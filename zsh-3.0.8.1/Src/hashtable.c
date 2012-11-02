@@ -551,12 +551,35 @@ hashdir(char **dirp)
 	    (fn[1] == '\0' ||
 	     (fn[1] == '.' && fn[2] == '\0')))
 	    continue;
+#if defined(_WIN32)
+	if (!cmdnamtab->getnode(cmdnamtab, fn)) {
+	    char *fext;
+	    fext = fn;
+	    while (*fext++)
+		;
+	    while ((fext > fn) && (*fext != '.'))
+		fext--;
+	    /* no extension or "known" extension */
+	    if ((fext == fn) || is_pathext(fext)) {
+		cn = (Cmdnam) zcalloc(sizeof *cn);
+		cn->flags = 0;
+		cn->u.name = dirp;
+		cmdnamtab->addnode(cmdnamtab, ztrdup(fn), cn);
+		*fext = 0;
+		cn = (Cmdnam) zcalloc(sizeof *cn);
+		cn->flags = 0;
+		cn->u.name = dirp;
+		cmdnamtab->addnode(cmdnamtab, ztrdup(fn), cn);
+	    }
+	}
+#else
 	if (!cmdnamtab->getnode(cmdnamtab, fn)) {
 	    cn = (Cmdnam) zcalloc(sizeof *cn);
 	    cn->flags = 0;
 	    cn->u.name = dirp;
 	    cmdnamtab->addnode(cmdnamtab, ztrdup(fn), cn);
 	}
+#endif
     }
     closedir(dir);
 }
