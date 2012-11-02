@@ -90,11 +90,12 @@
 # define xmalloc(s) _malloc_dbg(s, _NORMAL_BLOCK, __FILE__, __LINE__)
 # define xcalloc(s) _calloc_dbg(1, s, _NORMAL_BLOCK, __FILE__, __LINE__)
 # define xfree(p)   _free_dbg(p, _NORMAL_BLOCK)
-#elif defined(STDCRTLIB)
+#elif defined(STDCRTLIB) || defined(__TESTING__)
 # define xmalloc(s) malloc(s)
 # define xcalloc(s) calloc(1, s)
 # define xfree(p)   free(p)
 #else
+#include "fmalloc.h"
 # define xmalloc(s)  fmalloc(s)
 # define xcalloc(s)  fcalloc(1, s)
 # define xfree(p)    ffree(p)
