@@ -1655,26 +1655,26 @@ zjoin(char **arr, int delim)
     return ret;
 }
 
-/* Split a string containing a colon separated list *
+/* Split a string containing a 'sep' separated list *
  * of items into an array of strings.               */
 
 /**/
 char **
-colonsplit(char *s, int uniq)
+colonsplit(char *s, int sep, int uniq)
 {
     int ct;
     char *t, **ret, **ptr, **p;
 
-    for (t = s, ct = 0; *t; t++) /* count number of colons */
-	if (*t == ':')
+    for (t = s, ct = 0; *t; t++) /* count number of separators */
+	if (*t == sep)
 	    ct++;
     ptr = ret = (char **) zalloc(sizeof(char **) * (ct + 2));
 
     t = s;
     do {
 	s = t;
-        /* move t to point at next colon */
-	for (; *t && *t != ':'; t++);
+        /* move t to point at next separator */
+	for (; *t && *t != sep; t++);
 	if (uniq)
 	    for (p = ret; p < ptr; p++)
 		if (strlen(*p) == t - s && ! strncmp(*p, s, t - s))

@@ -1338,11 +1338,32 @@ colonarrsetfn(Param pm, char *x)
     char ***dptr = (char ***)pm->data;
 
     freearray(*dptr);
-    *dptr = x ? colonsplit(x, pm->flags & PM_UNIQUE) : mkarray(NULL);
+    *dptr = x ? colonsplit(x, ':', pm->flags & PM_UNIQUE) : mkarray(NULL);
     zsfree(x);
     if (pm->ename)
 	arrfixenv(pm->nam, *dptr);
 }
+
+#if defined(_WIN32)
+/**/
+char *
+semicolonarrgetfn(Param pm)
+{
+    return zjoin(*(char ***)pm->data, ';');
+}
+
+/**/
+void
+semicolonarrsetfn(Param pm, char *x)
+{
+    char ***dptr = (char ***)pm->data;
+
+    freearray(*dptr);
+    *dptr = x ? colonsplit(x, ';', pm->flags & PM_UNIQUE) : mkarray(NULL);
+    if (pm->ename)
+	arrfixenv(pm->nam, *dptr);
+}
+#endif
 
 /**/
 void
@@ -1789,7 +1810,11 @@ arrfixenv(char *s, char **t)
     MUSTUSEHEAP("arrfixenv");
     if (t == path)
 	cmdnamtab->emptytable(cmdnamtab);
+#if defined(_WIN32)
+    u = zjoin(t, t == path ? ';' : ':');
+#else
     u = zjoin(t, ':');
+#endif
     len_s = strlen(s);
     pm = (Param) paramtab->getnode(paramtab, s);
     if (isset(ALLEXPORT))

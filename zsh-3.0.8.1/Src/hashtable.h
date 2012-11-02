@@ -160,13 +160,18 @@ IPDEF7("RPS1", &rprompt),
 IPDEF7("SPROMPT", &sprompt),
 IPDEF7("0", &argzero),
 
+#if defined(_WIN32)
+# define IPDEF8W(A,B,C) {NULL,A,PM_SCALAR|PM_SPECIAL,BR(NULL),SFN(semicolonarrsetfn),GFN(semicolonarrgetfn),0,(void *)B,NULL,C,NULL,0}
+#else
+# define IPDEF8W(A,B,C) {NULL,A,PM_SCALAR|PM_SPECIAL,BR(NULL),SFN(colonarrsetfn),GFN(colonarrgetfn),0,(void *)B,NULL,C,NULL,0}
+#endif
 #define IPDEF8(A,B,C) {NULL,A,PM_SCALAR|PM_SPECIAL,BR(NULL),SFN(colonarrsetfn),GFN(colonarrgetfn),0,(void *)B,NULL,C,NULL,0}
 IPDEF8("CDPATH", &cdpath, "cdpath"),
 IPDEF8("FIGNORE", &fignore, "fignore"),
 IPDEF8("FPATH", &fpath, "fpath"),
 IPDEF8("MAILPATH", &mailpath, "mailpath"),
 IPDEF8("WATCH", &watch, "watch"),
-IPDEF8("PATH", &path, "path"),
+IPDEF8W("PATH", &path, "path"),
 IPDEF8("PSVAR", &psvar, "psvar"),
 
 #define IPDEF9(A,B,C) {NULL,A,PM_ARRAY|PM_SPECIAL|PM_DONTIMPORT,BR(NULL),SFN(arrvarsetfn),GFN(arrvargetfn),0,(void *)B,NULL,C,NULL,0}
