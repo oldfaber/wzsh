@@ -311,7 +311,11 @@ char *ttyname(int fd)
 {
 	static const char tname[] = "/dev/tty";
 
+#if defined(STDCRTLIB)
 	if (isatty(fd))
+#else
+	if (nt_isatty(fd))
+#endif
 		return (char *)tname;
 	errno = ENOTTY;
 	return NULL;
