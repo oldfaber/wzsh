@@ -264,11 +264,16 @@ findpwd(char *s)
 int
 ispwd(char *s)
 {
+#if defined(_WIN32)
+    /* st_ino under WIN32 is always 0 for stat(), return "not pwd" */
+    UNREFERENCED_PARAMETER(s);
+#else
     struct stat sbuf, tbuf;
 
     if (stat(unmeta(s), &sbuf) == 0 && stat(".", &tbuf) == 0)
 	if (sbuf.st_dev == tbuf.st_dev && sbuf.st_ino == tbuf.st_ino)
 	    return 1;
+#endif
     return 0;
 }
 
