@@ -369,6 +369,9 @@ void
 overwritemode(void)
 {
     insmode ^= 1;
+#if defined(_WIN32)
+    nt_setcursor(insmode);
+#endif
 }
 
 /**/
