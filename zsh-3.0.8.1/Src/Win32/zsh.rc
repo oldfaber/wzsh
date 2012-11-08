@@ -1,7 +1,8 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include "../version.h"
 
-#define VERSTRING "3.0.8"
+#define VERSTRING ZSH_VERSION 
 
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 IDI_ICON1 ICON "zsh.ico"
