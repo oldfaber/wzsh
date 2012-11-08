@@ -1907,9 +1907,9 @@ execcmd(Cmd cmd, int input, int output, int how, int last1)
 			_exit(1);
 		}
 		closem(1);
-		if (coprocin)
+		if (coprocin > 0)
 		    zclose(coprocin);
-		if (coprocout)
+		if (coprocout > 0)
 		    zclose(coprocout);
 #ifdef HAVE_GETRLIMIT
 		if (!forked)
