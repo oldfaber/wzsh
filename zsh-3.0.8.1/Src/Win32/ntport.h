@@ -49,7 +49,7 @@
 #include <io.h>
 #include <process.h>
 
-#include "uni_types.h"
+#include <uni_types.h>
 #include "fmalloc.h"
 
 
