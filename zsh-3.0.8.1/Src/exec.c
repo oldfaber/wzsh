@@ -1079,6 +1079,13 @@ clobber_open(struct redir *f)
 
 /* close an multio (success) */
 
+/* WIN32: Microsoft compilers at -O2 use registers agressively. If a local variable is in a
+ * register during fork(), it gets lost in the child. There is no cure
+ * for this, except to turn off the optimization. -amol 5/19/99
+ */
+#if defined(_WIN32)
+#include <optoff.h>
+#endif
 /**/
 void
 closemn(struct multio **mfds, int fd)
@@ -1112,6 +1119,9 @@ closemn(struct multio **mfds, int fd)
     }
     _exit(0);
 }
+#if defined(_WIN32)
+#include <opton.h>
+#endif
 
 /* close all the mnodes (failure) */
 
@@ -1284,6 +1294,9 @@ addvars(LinkList l, int export)
     }
 }
 
+#if defined(_WIN32)
+#include <optoff.h>
+#endif
 /**/
 void
 execcmd(Cmd cmd, int input, int output, int how, int last1)
@@ -1950,6 +1963,9 @@ execcmd(Cmd cmd, int input, int output, int how, int last1)
     zsfree(STTYval);
     STTYval = 0;
 }
+#if defined(_WIN32)
+#include <opton.h>
+#endif
 
 /* Arrange to have variables restored. */
 
@@ -2240,6 +2256,9 @@ getherestr(struct redir *fn)
 
 /* $(...) */
 
+#if defined(_WIN32)
+#include <optoff.h>
+#endif
 /**/
 LinkList
 getoutput(char *cmd, int qt)
@@ -2309,6 +2328,9 @@ getoutput(char *cmd, int qt)
     kill(getpid(), SIGKILL);
     return NULL;
 }
+#if defined(_WIN32)
+#include <opton.h>
+#endif
 
 /* read output of command substitution */
 
@@ -2387,6 +2409,9 @@ parsecmd(char *cmd)
 
 /* =(...) */
 
+#if defined(_WIN32)
+#include <optoff.h>
+#endif
 /**/
 char *
 getoutputfile(char *cmd)
@@ -2438,6 +2463,7 @@ getoutputfile(char *cmd)
     kill(getpid(), SIGKILL);
     return NULL;
 }
+/* _WIN32: continuing with optimizations off */
 
 #if !defined(PATH_DEV_FD) && defined(HAVE_FIFOS)
 /* get a temporary named pipe */
@@ -2547,6 +2573,9 @@ getpipe(char *cmd)
     _exit(lastval);
     return 0;
 }
+#if defined(_WIN32)
+#include <opton.h>
+#endif
 
 /* open pipes with fds >= 10 */
 
