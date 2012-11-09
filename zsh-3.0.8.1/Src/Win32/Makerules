@@ -1,7 +1,7 @@
 
 # clean removes *.$(oo) and if $(oo) is null will remove the directories !
 oo = obj
-DEFS += -DLIB_HAS_STDIO -DSHELL -DW32DEBUG
+DEFS += -DLIB_HAS_STDIO -DSHELL -DW32DEBUG -DHAVE_CLIPBOARD
 
 ifeq ($(findstring MSC,$(C_ENV)),MSC)
 CFLAGS   = -nologo -W3 -GF -EHsc- 

@@ -93,7 +93,7 @@ zle_vi.c zle_word.c \
 fork.c fmalloc.c io.c signal.c \
 unistd.c ntermcap.c tconsole.c killnice.c dirent.c access.c fstat.c \
 ntdbg.c shell_init.c nt_execve.c stdio.c zsh_support.c \
-zz_ntb2.c
+fullclip.c zz_ntb2.c
 
 # generated prototypes
 PROTO = builtin.pro compat.pro cond.pro exec.pro glob.pro hashtable.pro \
