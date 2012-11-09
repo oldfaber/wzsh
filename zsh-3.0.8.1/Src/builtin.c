@@ -2867,7 +2867,7 @@ typeset_single(char *cname, char *pname, Param pm, int func, int on, int off, in
 	if (pm->flags & PM_SPECIAL) {
 	    func = 0;
 	    on = (PM_TYPE(pm->flags) == PM_INTEGER) ?
-		(on &= ~(PM_LEFT | PM_RIGHT_B | PM_RIGHT_Z | PM_UPPER)) :
+		(on & ~(PM_LEFT | PM_RIGHT_B | PM_RIGHT_Z | PM_UPPER)) :
 		(on & ~PM_INTEGER);
 	    off &= ~PM_INTEGER;
 	}

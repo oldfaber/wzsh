@@ -488,7 +488,7 @@ init_shout(void)
 }
 
 /* flag for whether terminal has automargin (wraparound) capability */
-extern hasam;
+extern int hasam;
 
 /* Initialise termcap */
 
