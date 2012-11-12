@@ -1028,7 +1028,7 @@ paramsubst(LinkList l, LinkNode n, char **str, int qt, int ssub)
 	    }
 	    if (!vunset) {
 		val = getstrvalue(v);
-		fwidth = v->pm->ct ? v->pm->ct : strlen(val);
+		fwidth = v->pm->ct ? (unsigned int)v->pm->ct : strlen(val);
 		switch (v->pm->flags & (PM_LEFT | PM_RIGHT_B | PM_RIGHT_Z)) {
 		    char *t;
 		    unsigned int t0;

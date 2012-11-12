@@ -423,7 +423,7 @@ checkparams(char *p)
 	for (hn = paramtab->nodes[t0]; n < 2 && hn; hn = hn->next)
 	    if (pfxlen(p, hn->nam) == l) {
 		n++;
-		if (strlen(hn->nam) == l)
+		if ((int)strlen(hn->nam) == l)
 		    e = 1;
 	    }
     return (n == 1) ? (getsparam(p) != NULL) :
@@ -2214,7 +2214,7 @@ makecomplist(char *s, int incmd, int *delit, int *compadd, int untokenized)
 
   xorrec:
 
-    DPUTS(ll != strlen((char *) line), "BUG: xorrec: ll != strlen(line)");
+    DPUTS(ll != (int)strlen((char *) line), "BUG: xorrec: ll != strlen(line)");
 
     /* Go to the end of the word if complete_in_word is not set. */
     if (unset(COMPLETEINWORD) && cs != we)
@@ -3760,7 +3760,7 @@ selectlist(LinkList l)
     for (t1 = 0; t1 != colsz; t1++) {
 	ap = arr + t1;
 	do {
-	    int t2 = strlen(*ap) + 2, t3;
+	    size_t t2 = strlen(*ap) + 2, t3;
 
 	    fprintf(stderr, "%d) %s", t3 = ap - arr + 1, *ap);
 	    while (t3)

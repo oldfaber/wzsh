@@ -1682,7 +1682,7 @@ colonsplit(char *s, int sep, int uniq)
 	for (; *t && *t != sep; t++);
 	if (uniq)
 	    for (p = ret; p < ptr; p++)
-		if (strlen(*p) == t - s && ! strncmp(*p, s, t - s))
+		if (strlen(*p) == (size_t)(t - s) && ! strncmp(*p, s, t - s))
 		    goto cont;
 	*ptr = (char *) zalloc((t - s) + 1);
 	ztrncpy(*ptr++, s, t - s);

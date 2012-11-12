@@ -2265,7 +2265,7 @@ remnulargs(char *s)
 int
 qualdev(struct stat *buf, off_t dv)
 {
-    return buf->st_dev == dv;
+    return (off_t)buf->st_dev == dv;
 }
 
 /* number of hard links to file */
