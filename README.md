@@ -23,13 +23,14 @@ Compiled & working with::
 Pre-requisites:
   * a GNU-make compatible make. mingw32-make from the mingw project is
       available at http://sourceforge.net/projects/mingw/files/MinGW/Extension/make/
-      __nmake__ cannot parse the **Makefile**.
-  * *sed* and *awk*, get them from the *Gnuwin32* project, and put *sed* and
-      *gawk* in +PATH+.
+      **nmake** cannot parse the **Makefile**.
+  * *sed 4.2.1*   
+  * *awk 3.1.6*  
+    get them from the *Gnuwin32* project, and put *sed* and *gawk* in *PATH*.
   * a C compiler ;-). Add the path for the compiler and tools to Windows +PATH+.
 
-The +configure+ step is not used for Windows, and a pre-built Win32/config.h
-and Win32/Makefile are used. Before starting the compilation some environment
+The _configure_ step is not used for Windows, and a pre-built _Win32/config.h_
+and _Win32/Makefile_ are used. Before starting the compilation some environment
 variables must be set, depending on the compiler:
 
     rem for mingw32
@@ -49,15 +50,22 @@ variables must be set, depending on the compiler:
     rem
 
 For Microsoft command line compilers add the path to the Windows SDK to the
-environment variables LIB= and INCLUDE=.
+environment variables *LIB=* and *INCLUDE=*.
 
 Then, from the Src directory
 
     mingw32-make -f Win32/Makefile
 
 For Microsoft Visual Studio Express 2008 and 2010 pre-defined project
-files are in +Src/Win32/vsexpr-08+ and +Src/Win32/vsexpr-10+. These project do
+files are in *Src/Win32/vsexpr-08* and *Src/Win32/vsexpr-10*. These project do
 not generate the needed .pro files, use the Win32/Makefile.
+
+
+Install
+-------
+
+The installation is manual, the install target in *Win32/Makefile* is not
+used.
 
 
 Use
@@ -93,16 +101,16 @@ Deshpande:
   Added to the original zsh for Windows. Use a */bin* directory
 
 * _Removed NT-specific setopts_  
-    +winntnoassociations+:::
+    * *winntnoassociations*  
         Always try applications associated with extensions
-    +winntwaitforguiapps+:::
+    * *winntwaitforguiapps*
         Always execute GUI apps asynchronously
 
 Added  
-  * Better support for +#!+ in shell scripts
-  * Full +PATHEXT+ handling
-  * Hack to support +/C+ or +/c+ instead of +-c+ on invocation and special
-      parsing of the command line when +/C+ or +/c+ is used
+  * Better support for *#!* in shell scripts
+  * Full *PATHEXT* handling
+  * Hack to support */C* or */c* instead of *-c* on invocation and special
+    parsing of the command line when */C* or */c* is used
   * Integrated configurable logger
   * Builtin test command understands Windows junctions
   * Many many many bug fixes
@@ -117,18 +125,18 @@ Brief History
 -------------
 
 This port inherits from many other efforts. It was originally based on the
-zsh 3.0.5 port by Amol Deshpande. Using and fixing this port I found a better
+zsh 3.0.5 port by Amol Deshpande. Using and fixing this port I found an improved
 "fork" library in the win32 directory of the tcsh tree (http://www.tcsh.org).
 After merging the new files I and ported the result to zsh 3.0.8. Still some
 files in the zsh/ntport directory had a copyright statement with conditions
 that were difficult to comply with. The WinZsh effort
 (http://zsh-nt.sourceforge.net) obtained the permission to change the license
 for some zsh-specific files to 3-clause BSD. One last step was to find a
-replacement for the GPL licensed termcap.c, and it was found in ANSICON
-(https://github.com/adoxa/ansicon).
+replacement for the GPL licensed termcap.c. It was found in ANSICON
+(https://github.com/adoxa/ansicon) and tconsole.c is based on that project.
 
 Now all the files in the Win32 directory are unded 3 clause BSD or MIT-style
-license.
+licenses.
 
 
 Contributions
