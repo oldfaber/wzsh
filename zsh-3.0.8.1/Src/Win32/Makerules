@@ -14,8 +14,9 @@ ifdef RELEASE
 # test RELEASE optimization(s)
 # CFLAGS   += -O2 -MT 
 # -Og produces a buggy shell
-CFLAGS   += -Oityb2 -Gs65536 -MT 
-LIBS     += smalheap.obj libcmt.lib 
+CFLAGS   += -Oityb2 -Gs65536 -MT
+# to use smalheap.obj -force is needed !
+LIBS     += libcmt.lib 
 else
 # use -Fa to get an assembly listing
 DEFS     += 
@@ -31,7 +32,6 @@ CFLAGS   += -Zi
 LDFLAGS  += -Zi
 endif
 SPECIALCFLAG = -GS-
-# to use smalheap -force is needed !
 CLFLAGS  := -link -safeseh:NO -nodefaultlib -incremental:NO -entry:main_entry -stack:1048576,524288 
 ifeq ($(C_ENV),MSC64)
 CLFLAGS  +=-machine:X64
