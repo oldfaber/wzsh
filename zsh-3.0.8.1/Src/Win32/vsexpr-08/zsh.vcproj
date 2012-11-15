@@ -69,17 +69,15 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_MSC_VER"
-				ResourceOutputFileName="$(SolutionDir)/zsh.res"
+				PreprocessorDefinitions="_MSC_VER;DEBUG"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="user32.lib shlwapi.lib"
-				Version="3.0.8.3"
-				LinkIncremental="1"
+				AdditionalDependencies="shlwapi.lib"
+				LinkIncremental="0"
 				AdditionalLibraryDirectories=""
 				GenerateManifest="true"
 				GenerateDebugInformation="true"
@@ -149,8 +147,9 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="$(SolutionDir)"
-				PreprocessorDefinitions="HAVE_DIRENT_H"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..&quot;;&quot;$(SolutionDir)\..\include&quot;;&quot;$(SolutionDir)\..\..&quot;"
+				PreprocessorDefinitions="HAVE_CONFIG_H;SHELL;W32DEBUG;LIB_HAS_STDIO;HAVE_CLIPBOARD;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NONSTDC_NO_DEPRECATE=1"
+				MinimalRebuild="false"
 				ExceptionHandling="0"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
@@ -165,16 +164,18 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_MSC_VER"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="/section:.fusrdata,rw"
+				AdditionalDependencies="shlwapi.lib"
 				LinkIncremental="0"
 				GenerateManifest="true"
 				GenerateDebugInformation="true"
+				GenerateMapFile="true"
 				SubSystem="1"
 				StackReserveSize="1048576"
 				StackCommitSize="524288"
@@ -182,7 +183,7 @@
 				EnableCOMDATFolding="2"
 				LinkTimeCodeGeneration="0"
 				EntryPointSymbol="main_entry"
-				RandomizedBaseAddress="1"
+				RandomizedBaseAddress="0"
 				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
@@ -211,8 +212,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="2"
 			>
@@ -294,8 +295,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
