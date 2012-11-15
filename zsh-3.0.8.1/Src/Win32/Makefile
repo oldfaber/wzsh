@@ -251,7 +251,7 @@ mostlyclean:
 	rm -f core *.o *~
 
 clean: 
-	-@rm -rf *.exe *.obj *.o *.map *.pdb *.ilk *.tds *.ncb $(NTRES)
+	-@cmd /C "del /S /F /Q *.exe *.obj *.o *.pch *.map *.pdb *.ilk *.ncb *.res"
 
 distclean: clean
 	rm -f Makefile
