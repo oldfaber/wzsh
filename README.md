@@ -21,11 +21,11 @@ Compiled & working with::
   * gcc 3.3 on Interix
 
 Pre-requisites:
-  * a GNU-make compatible make. mingw32-make from the mingw project is
-      available at http://sourceforge.net/projects/mingw/files/MinGW/Extension/make/
+  * a GNU-make compatible make. mingw32-make from the mingw project is  
+      available at http://sourceforge.net/projects/mingw/files/MinGW/Extension/make/  
       **nmake** cannot parse the **Makefile**.
-  * *sed 4.2.1*   
-  * *awk 3.1.6*  
+  * *sed 4.2.1*    
+  * *awk 3.1.6*   
     get them from the *Gnuwin32* project, and put *sed* and *gawk* in *PATH*.
   * a C compiler ;-). Add the path for the compiler and tools to Windows +PATH+.
 
@@ -114,10 +114,9 @@ Added
   * Integrated configurable logger
   * Builtin test command understands Windows junctions
   * Many many many bug fixes
-
-New upstream zsh 3.0.8  
-  Well, not so new.  
-  It brings some enhancements to zsh, like 64 bit arithmetic
+  * New upstream zsh 3.0.8  
+    Well, not so new.  
+    It brings some enhancements to zsh, like 64 bit arithmetic
 
 
 
