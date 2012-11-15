@@ -62,7 +62,7 @@ SED = sed
 	$(COMPILE) $<
 
 .c.pro:
-	$(SED) -n -f $(srcdir)/makepro.sed $< | $(SED) --binary -e "s/\r//" > $@
+	$(SED) -n -f $(srcdir)/makepro.sed $< > $@
 
 # this is for ansi2krn conversion
 U =
@@ -251,7 +251,7 @@ mostlyclean:
 	rm -f core *.o *~
 
 clean: 
-	-@cmd /C "del /S /F /Q *.exe *.obj *.o *.pch *.map *.pdb *.ilk *.ncb *.res"
+	-@cmd "/C del /S /F /Q *.exe *.obj *.o *.pch *.map *.pdb *.ilk *.ncb *.res"
 
 distclean: clean
 	rm -f Makefile
