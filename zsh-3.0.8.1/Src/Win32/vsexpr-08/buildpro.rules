@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VisualStudioToolFile
+	Name="Build .pro"
+	Version="8,00"
+	>
+	<Rules>
+		<CustomBuildRule
+			Name="BuildPro"
+			DisplayName="Build .pro files"
+			CommandLine="sed -n -f ../../makepro.sed ../../$(InputName).c &gt; $(InputPath)"
+			Outputs="$(InputPath)"
+			AdditionalDependencies="*.c"
+			FileExtensions="*.pro"
+			>
+			<Properties>
+			</Properties>
+		</CustomBuildRule>
+	</Rules>
+</VisualStudioToolFile>

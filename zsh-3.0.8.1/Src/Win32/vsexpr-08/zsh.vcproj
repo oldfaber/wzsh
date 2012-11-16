@@ -17,6 +17,9 @@
 		/>
 	</Platforms>
 	<ToolFiles>
+		<ToolFile
+			RelativePath=".\buildpro.rules"
+		/>
 	</ToolFiles>
 	<Configurations>
 		<Configuration
@@ -37,6 +40,9 @@
 				CommandLine=""
 				AdditionalDependencies=""
 				Outputs=""
+			/>
+			<Tool
+				Name="BuildPro"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -132,6 +138,9 @@
 				CommandLine=""
 				AdditionalDependencies=""
 				Outputs=""
+			/>
+			<Tool
+				Name="BuildPro"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -666,6 +675,22 @@
 			<File
 				RelativePath="..\..\prototypes.h"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="../../builtin.pro;../../zle_word.pro"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="../../builtin.pro;../../zle_word.pro"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\include\pwd.h"
@@ -743,6 +768,135 @@
 			>
 			<File
 				RelativePath="..\zsh.rc"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Generated Files"
+			Filter="pro"
+			>
+			<File
+				RelativePath="..\..\builtin.pro"
+				>
+			</File>
+			<File
+				RelativePath="..\..\compat.pro"
+				>
+			</File>
+			<File
+				RelativePath="..\..\cond.pro"
+				>
+			</File>
+			<File
+				RelativePath="..\..\exec.pro"
+				>
+			</File>
+			<File
+				RelativePath="..\..\glob.pro"
+				>
+			</File>
+			<File
+				RelativePath="..\..\hashtable.pro"
+				>
+			</File>
+			<File
+				RelativePath="..\..\hist.pro"
+				>
+			</File>
+			<File
+				RelativePath="..\..\init.pro"
+				>
+			</File>
+			<File
+				RelativePath="..\..\input.pro"
+				>
+			</File>
+			<File
+				RelativePath="..\..\jobs.pro"
+				>
+			</File>
+			<File
+				RelativePath="..\..\lex.pro"
+				>
+			</File>
+			<File
+				RelativePath="..\..\linklist.pro"
+				>
+			</File>
+			<File
+				RelativePath="..\..\loop.pro"
+				>
+			</File>
+			<File
+				RelativePath="..\..\math.pro"
+				>
+			</File>
+			<File
+				RelativePath="..\..\mem.pro"
+				>
+			</File>
+			<File
+				RelativePath="..\..\params.pro"
+				>
+			</File>
+			<File
+				RelativePath="..\..\parse.pro"
+				>
+			</File>
+			<File
+				RelativePath="..\..\signals.pro"
+				>
+			</File>
+			<File
+				RelativePath="..\..\subst.pro"
+				>
+			</File>
+			<File
+				RelativePath="..\..\text.pro"
+				>
+			</File>
+			<File
+				RelativePath="..\..\utils.pro"
+				>
+			</File>
+			<File
+				RelativePath="..\..\watch.pro"
+				>
+			</File>
+			<File
+				RelativePath="..\..\zle_hist.pro"
+				>
+			</File>
+			<File
+				RelativePath="..\..\zle_main.pro"
+				>
+			</File>
+			<File
+				RelativePath="..\..\zle_misc.pro"
+				>
+			</File>
+			<File
+				RelativePath="..\..\zle_move.pro"
+				>
+			</File>
+			<File
+				RelativePath="..\..\zle_refresh.pro"
+				>
+			</File>
+			<File
+				RelativePath="..\..\zle_tricky.pro"
+				>
+			</File>
+			<File
+				RelativePath="..\..\zle_utils.pro"
+				>
+			</File>
+			<File
+				RelativePath="..\..\zle_vi.pro"
+				>
+			</File>
+			<File
+				RelativePath="..\..\zle_word.pro"
 				>
 			</File>
 		</Filter>
