@@ -99,7 +99,7 @@ void set_HOME_and_PATH(void)
 }
 
 
-static int keep_single_quote = 0;
+static int keep_single_quote;
 
 /* Replaces
  *      2N backslashes + quote -> N backslashes + begin quoted string
@@ -266,7 +266,7 @@ static int zsetarg(int *xargc, char ***xargv)
 		if (!process_arg(&p, &arg, argc == 0))
 			break;
 		if (stricmp(newargv[argc], "-c") == 0) {
-                        keep_single_quote = 1;
+                        keep_single_quote = 0;
 		} else if (stricmp(newargv[argc], "/c") == 0) {
 			/* replace "/c" or "/C" with "-c" */
                         keep_single_quote = 1;
