@@ -2,7 +2,7 @@
 #include <windows.h>
 #include "../version.h"
 
-#define VERSTRING ZSH_VERSION 
+#define VERSTRING ZSH_VERSION "-win32" 
 
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 IDI_ICON1 ICON "zsh.ico"
