@@ -71,11 +71,10 @@ typedef struct _fork_data {
 
 extern ForkData gForkData;
 
-#if defined(W32DEBUG)
-/* change if needed */
-#define FORK_TIMEOUT (50000)
+#if defined(DEBUGWAIT)
+#define FORK_TIMEOUT (INFINITE)
 #else
-#define FORK_TIMEOUT (50000)
+#define FORK_TIMEOUT (10000)
 #endif 
 
 #endif /* FORK_DATA_H */

@@ -49,6 +49,7 @@
  *      added NCSTATIC/NCGLOBAL for non-copied variables.
  *      removed _M_ALPHA code. ALPHA is stuck at a pre-release Windows 2000.
  *      removed the exception registration hack
+ *      Only use the faster and magical NtCurrentTeb() "function"
  * TODO: @@@@ fix fork() error path mess !
  */
 
@@ -60,7 +61,6 @@
 #include <stdlib.h>
 #include <setjmp.h>
 
-#include "unistd.h"
 #include "forklib.h"
 #include "forksect.h"
 #include "forkdata.h"
@@ -85,40 +85,8 @@ NCSTATIC HANDLE hin, hout, herr;
 NCSTATIC char ***childargvp;
 NCSTATIC char **childargv;
 
+#define GETSTACKBASE()          (((NT_TIB*)NtCurrentTeb())->StackBase)
 
-/*
- * The exception registration hack from "-amol 2/6/97" has been removed.
- * Zsh does NOT use __try/__except, new SEHOP conflicts with it and
- * is not portable to 64 bit Windows.
- */
-
-NT_TIB* (*myNtCurrentTeb)(void);
-
-#define GETSTACKBASE()       (((NT_TIB*)get_teb())->StackBase)
-
-
-
-/* the_tib MUST be NCSTATIC */
-NCSTATIC NT_TIB *the_tib;
-
-#if !defined(_M_IA64) && !defined(_M_AMD64)
-static void *get_teb(void)
-{
-	if (the_tib)
-		return the_tib;
-	myNtCurrentTeb = (NT_TIB* (__cdecl *)(void))GetProcAddress(LoadLibrary("ntdll.dll"), "NtCurrentTeb");
-	if (!myNtCurrentTeb)
-		return NULL;
-	the_tib = myNtCurrentTeb();
-	if (the_tib == NULL) {
-		dbgprintf(PR_ERROR, "!!! Error TIB is NULL\n");
-		abort();
-	}
-	return the_tib;
-}
-#else
-#define get_teb NtCurrentTeb
-#endif /* _M_IA64 */
 
 /* ONLY used if bIsWow64Process */
 void set_stackbase(void *ptr)
@@ -163,7 +131,7 @@ static HANDLE newhandle(HANDLE oldh, HANDLE *newh)
 		dbgprintf(PR_ERROR, "!!! DuplicateHandle(0x%p, ..) error %ld in %s\n", oldh, GetLastError(), __FUNCTION__);
 		return *newh;
 	}
-	dbgprintf(PR_IO, "newhandle() duplicated handle 0x%p => 0x%p\n", oldh, *newh);
+	dbgprintf(PR_IO, "%s() duplicated handle 0x%p => 0x%p\n", __FUNCTION__, oldh, *newh);
 	return *newh;
 }
 
@@ -253,6 +221,16 @@ void fork_init(char ***cargvp)
 		/* save child &argv, argv */
 		childargvp = cargvp;
 		childargv = *cargvp;
+#if defined(DEBUGWAIT)
+		/* wait forever for a debugger */
+		for (;;) {
+			if (IsDebuggerPresent()) {
+				DebugBreak();
+				break;
+			}
+			Sleep(1000);
+		}
+#endif
 		/* Whee ! */
 		longjmp(__fork_context, 1);
 	}
