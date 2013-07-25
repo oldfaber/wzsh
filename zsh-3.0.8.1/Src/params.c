@@ -270,9 +270,12 @@ isident(char *s)
     if (*ss != '[')
 	return 0;
     noeval = 1;
-    (void)mathevalarg(++ss, &ss);
-    if (*ss == ',')
-	(void)mathevalarg(++ss, &ss);
+    ++ss;
+    (void)mathevalarg(ss, &ss);
+    if (*ss == ',') {
+	++ss;
+	(void)mathevalarg(ss, &ss);
+    }
     noeval = ne;		/* restore the value of noeval */
     if (*ss != ']' || ss[1])
 	return 0;

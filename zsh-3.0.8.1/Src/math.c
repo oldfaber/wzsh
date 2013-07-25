@@ -329,7 +329,8 @@ zzlex(void)
 	    if (*ptr == 'x' || *ptr == 'X') {
 		unary = 0;
 		/* Should we set lastbase here? */
-		yyval = zstrtol(++ptr, &ptr, lastbase = 16);
+		ptr++;
+		yyval = zstrtol(ptr, &ptr, lastbase = 16);
 		return NUM;
 	    }
 	/* Fall through! */
