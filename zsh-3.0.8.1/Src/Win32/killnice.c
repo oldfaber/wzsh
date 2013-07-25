@@ -120,10 +120,22 @@ int kill(pid_t pid, int sig)
 		/* follow thru */
 	default:
 		/* kill(pid, SIGCONT) will return 0 */
-                /* should return EINVAL if the signal is not valid */
+		/* should return EINVAL if the signal is not valid */
 		break;
 	}
 	return ret;
+}
+
+
+/*
+ oldfaber:
+	added nt_raise. raise() from CRT is referenced from crt0dat, so this function
+	always comes from the library. Use a #define for the application program.
+*/
+
+int nt_raise(int nsig)
+{
+        return kill((pid_t)GetCurrentProcessId(), nsig);
 }
 
 
