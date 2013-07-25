@@ -98,8 +98,8 @@ static int char2int(const char *s)
  DESCRIPTION
         initialize the debugflags variable. basename is cut to 5 char if
         longer, uppercased and "_DFLAGS" is appended to form the environment
-        variable name.
-        5 chars is arbitrary, but help remind the program name
+        variable name. 5 chars are used to remind the program name.
+        If called with a 0-length string enable all messages.
 */
 
 void init_dbgprintf(const char *basename)
@@ -114,6 +114,11 @@ void init_dbgprintf(const char *basename)
 	/* if envvar is NULL enable nothing */
 	if (!basename) {
 		debugflags = 0;
+		return;
+	}
+	/* call init_dbgprintf("") to enable all messages */
+	if (*basename == '\0') {
+		debugflags = 0x1fff;
 		return;
 	}
 	ii = 0;
@@ -134,7 +139,7 @@ void init_dbgprintf(const char *basename)
 		/* hex numbers are prefixed by "0x" */
 		if (*s == '0' && *(s+1) == 'x') {
 			s += 2;
-				factor = 16;
+			factor = 16;
 		} else
 			factor = 10;
 		/* convert a digit at a time, add to f */
