@@ -50,7 +50,12 @@
  *      removed _M_ALPHA code. ALPHA is stuck at a pre-release Windows 2000.
  *      removed the exception registration hack
  *      Only use the faster and magical NtCurrentTeb() "function"
- * TODO: @@@@ fix fork() error path mess !
+ * TODO:
+ *      @@@@ fix fork() error path mess !
+ * NOTES
+ *      Use this (stealed from the cygwin mailing list) to test the fork speed:
+ *      #!/bin/sh
+ *      while (true); do date; done | uniq -c
  */
 
 #define WIN32_LEAN_AND_MEAN
@@ -217,20 +222,11 @@ static int copymem(HANDLE hproc, void *p1, void *p2)
 
 void fork_init(char ***cargvp)
 {
+	dbgprintf(PR_FORK, "%s(): environment 0x%p\n", __FUNCTION__, environ);
 	if (__forked) {
 		/* save child &argv, argv */
 		childargvp = cargvp;
 		childargv = *cargvp;
-#if defined(DEBUGWAIT)
-		/* wait forever for a debugger */
-		for (;;) {
-			if (IsDebuggerPresent()) {
-				DebugBreak();
-				break;
-			}
-			Sleep(1000);
-		}
-#endif
 		/* Whee ! */
 		longjmp(__fork_context, 1);
 	}
@@ -258,9 +254,10 @@ int fork(void)
 
         /* only the main thread may call fork(), non-main threads have a different stack ! */
 	if (GetCurrentThreadId() != mainThreadId) {
-		dbgprintf(PR_ERROR, "!!! error: fork() called from non main thread %ld\n", GetCurrentThreadId());
+		dbgprintf(PR_ERROR, "!!! error: fork() called outside main thread %ld\n", GetCurrentThreadId());
 		errno = EAGAIN;
-		DebugBreak();
+		if (IsDebuggerPresent())
+			DebugBreak();
 		return (-1);
 	}
 
@@ -302,6 +299,16 @@ int fork(void)
 			*childargvp = childargv;
 		restore_fds();
 		dbgprintf(PR_FORK, "returning from fork()\n");
+#if defined(DEBUGWAIT)
+		/* wait forever for a debugger */
+		for (;;) {
+			if (IsDebuggerPresent()) {
+				DebugBreak();
+				break;
+			}
+			Sleep(1000);
+		}
+#endif
 		return 0;
 	}
 
@@ -322,6 +329,7 @@ int fork(void)
 			   &si,
 			   &pi)) {
 		dbgprintf(PR_ERROR, "fork(): !!! error %ld creating process\n", GetLastError());
+		/* @@@@ should close_copied_fds() ? */
 		close_si_handles();
 		return -1;
 	}
@@ -399,6 +407,10 @@ int fork(void)
 			dbgprintf(PR_ERROR, "!!! error %ld resuming child\n", GetLastError());
 			goto error;
 		}
+		/* speed optimization: run the child. When the parent reaches the
+		   WaitForMultipleObjects() below there will be no waiting.
+		   Sleep(0) or Sleep(1) does not make any visible difference */
+		Sleep(0);
 	}
 	// in the wow64 case, the child will be waiting  on h64parent again.
 	// set it, and then wait for h64child. This will mean the child has
@@ -419,7 +431,7 @@ int fork(void)
 	/* Wait for the child to start and init itself */
 	hArray[0] = __hforkchild;
 	hArray[1] = hProc;
-	/* waiting for hProc should catch children that dont' reach SetEvent(__hforkChild)
+	/* waiting for hProc should catch children that don't reach SetEvent(__hforkchild)
 	   because of early termination */
 	object_active = WaitForMultipleObjects(LENGTH_OF(hArray), hArray, FALSE, FORK_TIMEOUT);
 	if (object_active != WAIT_OBJECT_0) {
