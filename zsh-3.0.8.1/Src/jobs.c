@@ -44,8 +44,8 @@ dtime(struct timeval *dt, struct timeval *t1, struct timeval *t2)
     dt->tv_sec = t2->tv_sec - t1->tv_sec;
     dt->tv_usec = t2->tv_usec - t1->tv_usec;
     if (dt->tv_usec < 0) {
-	dt->tv_usec += 1000000.0;
-	dt->tv_sec -= 1.0;
+	dt->tv_usec += 1000000L;
+	dt->tv_sec -= 1L;
     }
     return dt;
 }
