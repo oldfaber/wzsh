@@ -121,7 +121,6 @@ static void do_nothing(const wchar_t *expression, const wchar_t *function, const
 	UNREFERENCED_PARAMETER(file);
 	UNREFERENCED_PARAMETER(line);
 	UNREFERENCED_PARAMETER(pReserved);
-	dbgprintf(PR_ERROR, "Invalid parameter found at line %u\n", line);
 }
 # else
 #  error Unsupported Microsoft Compiler version
