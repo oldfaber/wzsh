@@ -1,6 +1,6 @@
 /*
  *  Copyright (c) 2005-2011 Jason Hood
- *  Copyright (c) 2012, oldfaber _at_ gmail.com
+ *  Copyright (c) 2012-2013 oldfaber _at_ gmail.com
  *
  *  Permission to use, copy, modify, and/or distribute this software for any
  *  purpose with or without fee is hereby granted, provided that the above

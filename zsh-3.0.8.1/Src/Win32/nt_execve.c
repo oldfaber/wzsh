@@ -36,7 +36,7 @@
 /*
  * oldfaber:
  *      path_slashify() renamed path_to_slash() and moved to shell_init.c
- *      forward_slash_get_cwd() moved to another file, semplified and renamed p_getcwd{)
+ *      forward_slash_get_cwd() moved to another file, simplified and renamed getcwd{)
  *      getmachine() removed, tcsh specific
  *      quoteProtect() static
  *      init_wow64() moved to fork.c
