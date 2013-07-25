@@ -22,7 +22,7 @@ extern unsigned long bookdata1,bookdata2;
 # define NCSTATIC static __declspec(allocate(".nocopy"))
 # define NCGLOBAL __declspec(allocate(".nocopy"))
 #endif
-#if defined(__MINGW32__)
+#if defined(__MINGW32__)||defined(__TINYC__)
 # define NCSTATIC static __attribute__((section(".nocopy")))
 # define NCGLOBAL __attribute__((section(".nocopy")))
 #endif

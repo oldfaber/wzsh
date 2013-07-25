@@ -74,7 +74,7 @@
 # endif
 #endif
 
-#if defined(LIB_HAS_STDIO)
+#if defined(LIB_HAS_STDIO) && !defined(STDIOLIB)
 extern FILE* nt_stdin, *nt_stdout, *nt_stderr;
 # if defined(stdin)
 #  undef stdin

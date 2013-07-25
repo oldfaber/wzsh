@@ -55,7 +55,8 @@
 #include <fcntl.h>
 #include <ctype.h>
 
-#include "signal.h"
+#include <signal.h>
+
 #include "ntdbg.h"
 #include "forklib.h"
 #include "forksect.h"
