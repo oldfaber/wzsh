@@ -494,7 +494,7 @@ int waitpid(pid_t pid, int *statloc, int options)
 	if (!clist_h) {
 		dbgprintf(PR_SIGNAL,  "  [%ld] %s(%d, ..): no child\n", GetCurrentThreadId(), __FUNCTION__, (int)pid);
                 errno = ECHILD;
-                return 0;
+                return -1;
 	}
 
 	EnterCriticalSection(&sigcritter);
@@ -505,12 +505,12 @@ int waitpid(pid_t pid, int *statloc, int options)
 		*statloc = (clist_h->exitcode & 0x00FF);
 	temp = clist_h;
 	clist_h = clist_h->next;
-	/* the list item is allocated with heap_alloc */
 	LeaveCriticalSection(&sigcritter);
 
+	/* the list item is allocated with heap_alloc() */
 	heap_free(temp);
 	dbgprintf(PR_SIGNAL, "  [%ld] %s(%d, ..): exitcode %d for pid %d\n", GetCurrentThreadId(), __FUNCTION__, (int)pid, *statloc, retcode);
-	return (int)retcode;
+	return retcode;
 }
 
 
