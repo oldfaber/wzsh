@@ -2724,7 +2724,7 @@ makecomplist(char *s, int incmd, int *delit, int *compadd, int untokenized)
 	scanhashtable(nameddirtab, 0, 0, 0, addhnmatch, 0);
     if (cc->mask & CC_OPTIONS) {
 	/* Add option names. */
-	struct option *o;
+	struct zoption *o;
 
 	for (o = optns + OPT_SIZE; (--o)->name; )
 	    addmatch(dupstring(o->name), NULL);

@@ -695,9 +695,9 @@ extern char *cmdnames[];
 #endif
  
 #ifndef GLOBALS
-extern struct option optns[OPT_SIZE];
+extern struct zoption optns[OPT_SIZE];
 #else
-struct option optns[OPT_SIZE] = {
+struct zoption optns[OPT_SIZE] = {
 # define x OPT_REV|
     {NULL, 0, 0, 0},
     {"allexport", 		'a',  'a',  OPT_EMULATE},

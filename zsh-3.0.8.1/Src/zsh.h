@@ -1053,7 +1053,7 @@ enum {
 
 /* the option name table */
 
-struct option {
+struct zoption {
     char *name;			/* full name */
     char id_zsh;		/* single letter name in zsh/csh mode */
     char id_ksh;		/* single letter name in ksh/sh mode */
